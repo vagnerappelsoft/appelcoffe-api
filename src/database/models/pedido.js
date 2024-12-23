@@ -14,15 +14,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Pedido.init({
-    bebida_id: DataTypes.INTEGER,
-    pessoa_id: DataTypes.INTEGER,
-    quantidade: DataTypes.INTEGER,
     unitario: DataTypes.DECIMAL,
     total: DataTypes.DECIMAL,
     data_compra: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'Pedido',
+    tableName: 'pedidos',
+    timestamps: true,
+    paranoid: true
   });
   return Pedido;
 };

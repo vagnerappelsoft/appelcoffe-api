@@ -22,7 +22,12 @@ module.exports = {
         type: Sequelize.STRING
       },
       status: {
-        type: Sequelize.ENUM
+        type: Sequelize.ENUM("Ativo", "Inativo"),
+        allowNull: false
+      },
+      deleted_at: {
+        type: Sequelize.DATE,
+        allowNull: true
       },
       createdAt: {
         allowNull: false,

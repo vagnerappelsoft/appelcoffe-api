@@ -1,0 +1,43 @@
+version: "3.8"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: node-app
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      DB_HOST: 35.198.52.200
+      DB_USER: app_user  # Substitua pelo seu usuário do banco
+      DB_PASS: cafezinho  # Substitua pela senha do usuário do banco
+      DB_NAME: databasecafe  # Nome do banco de dados
+      DB_DIALECT: mysql
+    depends_on:
+      - db
+    volumes:
+      - .:/src/
+      - /src/node_modules
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0
+    container_name: mysql-db
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: cafezinho
+      MYSQL_DATABASE: databasecafe
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db_data:

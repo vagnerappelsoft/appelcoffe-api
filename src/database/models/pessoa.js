@@ -15,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
   }
   Pessoa.init({
     nome: DataTypes.STRING,
-    setor_id: DataTypes.INTEGER,
     usuario: DataTypes.STRING,
     senha: DataTypes.STRING,
     foto: DataTypes.STRING,
@@ -23,6 +22,9 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Pessoa',
+    tableName: 'pessoas',
+    timestamps: true,
+    paranoid: true
   });
   return Pessoa;
 };

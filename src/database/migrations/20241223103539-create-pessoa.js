@@ -22,7 +22,12 @@ module.exports = {
         type: Sequelize.STRING
       },
       permissao: {
-        type: Sequelize.ENUM
+        type: Sequelize.ENUM('ADMIN', 'USER', "AUX"),
+        allowNull: false
+      },
+      deleted_at: {
+        type: Sequelize.DATE,
+        allowNull: true
       },
       createdAt: {
         allowNull: false,

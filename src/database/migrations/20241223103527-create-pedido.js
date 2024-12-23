@@ -18,10 +18,15 @@ module.exports = {
       data_compra: {
         type: Sequelize.DATEONLY
       },
+      deleted_at: {
+        type: Sequelize.DATE,
+        allowNull: true
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
       },
+      
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
