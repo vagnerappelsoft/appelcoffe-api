@@ -13,5 +13,5 @@ COPY . .
 # Exponha a porta que seu servidor irá rodar
 EXPOSE 3000
 
-# Primeiro, execute as migrações, depois inicie o servidor
 CMD ["npm", "start"]
+

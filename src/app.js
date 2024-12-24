@@ -1,10 +1,10 @@
 const express = require('express');
-const routes = require('./routes');
+const routes = require('./routes/app');
 
 const app = express();
 app.use(express.json());
+routes(app)
 
-// Use the router
-app.use(routes);
+
 
 module.exports = app;

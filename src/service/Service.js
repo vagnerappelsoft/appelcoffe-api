@@ -1,31 +1,50 @@
-const { where } = require("sequelize")
-const dataSource = require("../database/models") 
+const { where } = require("sequelize");
+const dataSource = require("../database/models");
 
-class Service{
-    constructor(model){
-        this.model = model
+class Service {
+    constructor(model) {
+        this.model = model;
     }
 
-    async getAll(){
-        return await dataSource[this.model].findAll()
+    async getAll() {
+        try {
+            return await dataSource[this.model].findAll();
+        } catch (error) {
+            throw new Error(`Error fetching all data: ${error.message}`);
+        }
     }
 
-    async getById(id){
-        return await dataSource[this.model].findbyPk(id)
-
+    async getById(id) {
+        try {
+            return await dataSource[this.model].findByPk(id);
+        } catch (error) {
+            throw new Error(`Error fetching data by ID: ${error.message}`);
+        }
     }
 
-    async putData(params, data){
-        return await dataSource[this.model].update(data, {where: {...params}})
+    async putData(params, data) {
+        try {
+            return await dataSource[this.model].update(data, { where: { ...params } });
+        } catch (error) {
+            throw new Error(`Error updating data: ${error.message}`);
+        }
     }
 
-    async createData(data){
-        return await dataSource[this.model].create(data)
+    async createData(data) {
+        try {
+            return await dataSource[this.model].create(data);
+        } catch (error) {
+            throw new Error(`Error creating data: ${error.message}`);
+        }
     }
 
-    async deleteData(params){
-        return await dataSource[this.model].destroy({where: {...params}})
+    async deleteData(params) {
+        try {
+            return await dataSource[this.model].destroy({ where: { ...params } });
+        } catch (error) {
+            throw new Error(`Error deleting data: ${error.message}`);
+        }
     }
-
-
 }
+
+module.exports = Service;

@@ -1,6 +1,6 @@
 'use strict';
 
-/** @type {import('sequelize-cli').Migration} */
+ /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
     /**
@@ -31,21 +31,28 @@ module.exports = {
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE'
       
-    }),
+    })
 
     await queryInterface.addColumn('Pedidos', 'quantidade', {
       type: Sequelize.INTEGER,
       allowNull: false,
-      references: {
-        model: 'Bebidas',
-        key: ''
-      },
+      defaultValue: 1
     })
 
+    await queryInterface.addColumn('Pessoas', 'setor_id', {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Setores',
+        key: 'id'
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE'
+    
+    }
+    )
+
   },
-
-
-
   async down (queryInterface, Sequelize) {
     /**
      * Add reverting commands here.
@@ -53,5 +60,9 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
+    await queryInterface.removeColumn('Pedidos', 'cliente_id');
+    await queryInterface.removeColumn('Pedidos', 'bebida_id');
+    await queryInterface.removeColumn('Pedidos', 'quantidade');
+    await queryInterface.removeColumn('Pessoas', 'setor_id');
   }
 };
