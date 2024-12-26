@@ -37,6 +37,10 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
+console.log(`Models loaded: ${Object.keys(db)}`);
+console.log(`Pessoa model: ${db.Pessoa ? 'Loaded' : 'Not Loaded'}`);
+console.log(`DataSource content: ${JSON.stringify(db, null, 2)}`);
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

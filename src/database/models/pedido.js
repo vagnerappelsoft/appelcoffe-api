@@ -20,9 +20,10 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Pedido',
-    tableName: 'pedidos',
+    tableName: 'Pedidos',
     timestamps: true,
-    paranoid: true
+    paranoid: true,
+    deletedAt: 'deleted_at'
   });
   return Pedido;
 };

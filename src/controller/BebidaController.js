@@ -2,7 +2,7 @@ const Controller = require('./Controller');
 const BebidaService = require('../service/BebidaService');
 
 
-const bebidaService = new BebidaService;
+const bebidaService = new BebidaService();
 
 class BebidaController extends Controller{
     constructor(){

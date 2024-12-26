@@ -18,13 +18,18 @@ module.exports = (sequelize, DataTypes) => {
     descricao: DataTypes.TEXT,
     preco: DataTypes.DECIMAL,
     imagem: DataTypes.STRING,
-    status: DataTypes.ENUM
+    status: {
+      type: DataTypes.ENUM,
+      values: ['Ativo', 'Inativo'],
+      allowNull: false
+    }
   }, {
     sequelize,
     modelName: 'Bebida',
-    tableName: 'bebidas',
+    tableName: 'Bebidas',
     timestamps: true,
-    paranoid: true
+    paranoid: true,
+    deletedAt: 'deleted_at'
   });
   return Bebida;
 };

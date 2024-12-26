@@ -2,7 +2,8 @@ const Service = require('./Service');
 
 class PessoaService extends Service {
   constructor() {
-    super('pessoas');
+    super('Pessoa');
+    console.log('PessoaService initialized');
   }
 }
 

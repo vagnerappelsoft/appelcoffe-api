@@ -7,6 +7,7 @@ class PedidoController extends Controller {
     constructor() {
         super(pedidoService);
     }
+    
 
     
     }

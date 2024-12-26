@@ -18,13 +18,19 @@ module.exports = (sequelize, DataTypes) => {
     usuario: DataTypes.STRING,
     senha: DataTypes.STRING,
     foto: DataTypes.STRING,
-    permissao: DataTypes.ENUM
+    permissao: {
+      type: DataTypes.ENUM,
+      values: ['USER', 'ADMIN', 'AUX'],
+      allowNull: false
+    }
   }, {
     sequelize,
     modelName: 'Pessoa',
-    tableName: 'pessoas',
+    tableName: 'Pessoas',
     timestamps: true,
-    paranoid: true
+    paranoid: true,
+    deletedAt: 'deleted_at'
+
   });
   return Pessoa;
 };

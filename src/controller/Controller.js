@@ -12,7 +12,7 @@ class Controller{
         }
     }
 
-    async ListarDataPorId(req, res){
+    async ListarId(req, res){
         try {
             const {id} = req.params;
             const data = await this.service.getById(id);

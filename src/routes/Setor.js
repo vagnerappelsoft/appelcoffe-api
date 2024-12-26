@@ -6,8 +6,8 @@ const route = express.Router()
 
 route.get('/setor', (req, res) => setorController.ListarData(req, res))
 route.get('/setor/:id', (req, res) => setorController.ListarId(req, res))
-route.put('/setor', (req, res) => setorController.ModificarData(req, res))
-route.post('/setor/:id', (req, res) => setorController.CriarData(req, res))
+route.put('/setor/:id', (req, res) => setorController.ModificarData(req, res))
+route.post('/setor', (req, res) => setorController.CriarData(req, res))
 route.delete('/setor/:id', (req, res) => setorController.DeletarData(req, res))
 
 module.exports = route
