@@ -6,13 +6,18 @@ class Service {
         console.log(`Available models: ${Object.keys(dataSource)}`);
     }
 
-    async getAll() {
-        try {
-            return await dataSource[this.model].findAll();
-        } catch (error) {
-            throw new Error(`Error fetching all data for ${this.model}: ${error.message}`);
+   async getAll(filters = {}, attributes = null) {
+    try {
+        const options = { where: filters }; // Aplica filtros opcionais
+        if (attributes) {
+            options.attributes = attributes; // Seleciona colunas específicas se fornecidas
         }
+        return await dataSource[this.model].findAll(options);
+    } catch (error) {
+        throw new Error(`Error fetching all data for ${this.model}: ${error.message}`);
     }
+}
+
 
     async getById(id) {
         try {

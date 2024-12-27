@@ -25,6 +25,16 @@ module.exports = {
         type: Sequelize.ENUM('ADMIN', 'USER', "AUX"),
         allowNull: false
       },
+      setor_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Setores',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+      },
       deleted_at: {
         type: Sequelize.DATE,
         allowNull: true

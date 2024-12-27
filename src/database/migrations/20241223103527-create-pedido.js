@@ -18,6 +18,26 @@ module.exports = {
       data_compra: {
         type: Sequelize.DATEONLY
       },
+      cliente_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Pessoas',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+      },
+      bebida_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Bebidas',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+      },
       deleted_at: {
         type: Sequelize.DATE,
         allowNull: true

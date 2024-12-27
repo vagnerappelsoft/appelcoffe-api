@@ -6,6 +6,10 @@ class BebidaService extends Service{
         super('Bebida');
     }
 
+    async getListagemBebida(params) {
+        return await this.getAll(params, ['id', 'nome', 'preco', 'status']);
+    }
+
 }
 
 module.exports = BebidaService;

@@ -6,7 +6,7 @@ const app = express();
 
 // Middleware de CORS
 app.use(cors({
-    origin: 'http://localhost:5173', // Permite requisições do frontend no Vite
+    origin: '*', // Permite requisições de qualquer origem
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
     allowedHeaders: ['Content-Type', 'Authorization'], // Cabeçalhos permitidos
 }));
