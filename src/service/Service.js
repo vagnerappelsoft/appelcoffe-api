@@ -8,13 +8,6 @@ class Service {
 
     async getAll() {
         try {
-            console.log(`Fetching all data for model: ${this.model}`);
-            if (!dataSource[this.model]) {
-                throw new Error(`Model ${this.model} not found in dataSource`);
-            }
-            if (typeof dataSource[this.model].findAll !== 'function') {
-                throw new Error(`Method findAll not found on model ${this.model}`);
-            }
             return await dataSource[this.model].findAll();
         } catch (error) {
             throw new Error(`Error fetching all data for ${this.model}: ${error.message}`);
