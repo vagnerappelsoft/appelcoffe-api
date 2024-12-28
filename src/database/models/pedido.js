@@ -11,9 +11,19 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Pedido.belongsTo(models.Pessoa, {
+        foreignKey: 'cliente_id',
+        as: 'cliente'
+      });
+      Pedido.belongsTo(models.Bebida, {
+        foreignKey: 'bebida_id',
+        as: 'bebida'
+      });
     }
   }
   Pedido.init({
+    bebida_id: DataTypes.INTEGER,
+    cliente_id: DataTypes.INTEGER,
     unitario: DataTypes.DECIMAL,
     total: DataTypes.DECIMAL,
     data_compra: DataTypes.DATE

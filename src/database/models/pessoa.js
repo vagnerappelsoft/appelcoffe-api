@@ -10,7 +10,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Pessoa.belongsTo(models.Setor, {
+        foreignKey: 'setor_id'
+      });
     }
   }
   Pessoa.init({
@@ -18,6 +20,14 @@ module.exports = (sequelize, DataTypes) => {
     usuario: DataTypes.STRING,
     senha: DataTypes.STRING,
     foto: DataTypes.STRING,
+    setor_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Setores',
+        key: 'id'
+      }
+    },
     permissao: {
       type: DataTypes.ENUM,
       values: ['USER', 'ADMIN', 'AUX'],
@@ -30,7 +40,6 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,
     paranoid: true,
     deletedAt: 'deleted_at'
-
   });
   return Pessoa;
 };

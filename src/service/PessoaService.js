@@ -6,10 +6,14 @@ class PessoaService extends Service {
     console.log('PessoaService initialized');
   }
 
-    async getListagem(filters = {}) {
-        return await this.getAll(filters, ['id', 'foto', 'nome', 'setor_id']); // Seleciona apenas as colunas necessárias
+  async getListagemPessoa(page = 1, limit = 12, filters = {}) {
+    try {
+      const attributes = ['id', 'foto', 'nome', 'setor_id'];
+      return await this.getPaginated(page, limit, filters, attributes);
+    } catch (error) {
+      throw new Error(`Error fetching paginated pessoas: ${error.message}`);
     }
+  }
 }
 
 module.exports = PessoaService;
-

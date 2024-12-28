@@ -7,10 +7,10 @@ const routes = (app) => {
     
     app.use(
         express.json(),
-        require('./Setor'),
-        require('./Pedido'),
-        require('./Pessoa'),
-        require('./Bebida')
+        require('./SetorRoutes'),
+        require('./PedidoRoutes'),
+        require('./PessoaRoutes'),
+        require('./BebidaRoutes')
     );
 }    
 
