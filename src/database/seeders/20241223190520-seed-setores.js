@@ -1,18 +1,16 @@
 'use strict';
 
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     await queryInterface.bulkInsert('Setores', [
-      { nome: 'Financeiro', createdAt: new Date(), updatedAt: new Date() },
-      { nome: 'RH', createdAt: new Date(), updatedAt: new Date() },
-      { nome: 'TI', createdAt: new Date(), updatedAt: new Date() },
-      { nome: 'Marketing', createdAt: new Date(), updatedAt: new Date() },
-      { nome: 'Vendas', createdAt: new Date(), updatedAt: new Date() },
-      
+      { nome: 'Administração', createdAt: new Date(), updatedAt: new Date() },
+      { nome: 'Recursos Humanos', createdAt: new Date(), updatedAt: new Date() },
+      { nome: 'Financeiro', createdAt: new Date(), updatedAt: new Date() }
     ], {});
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     await queryInterface.bulkDelete('Setores', null, {});
   }
 };

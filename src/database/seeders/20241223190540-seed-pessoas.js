@@ -1,18 +1,23 @@
 'use strict';
 
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
+    // Primeiro, vamos garantir que os setores existam
+    const setores = await queryInterface.sequelize.query(
+      `SELECT id FROM Setores ORDER BY id ASC;`
+    );
+
+    const setoresIds = setores[0].map(setor => setor.id);
+
     await queryInterface.bulkInsert('Pessoas', [
-      { nome: 'João Silva', usuario: 'joao', senha: 'senha123', foto: 'joao.jpg', permissao: 'ADMIN', setor_id: 1, createdAt: new Date(), updatedAt: new Date() },
-      { nome: 'Maria Souza', usuario: 'maria', senha: 'senha123', foto: 'maria.jpg', permissao: 'USER', setor_id: 2, createdAt: new Date(), updatedAt: new Date() },
-      { nome: 'Carlos Pereira', usuario: 'carlos', senha: 'senha123', foto: 'carlos.jpg', permissao: 'USER', setor_id: 3, createdAt: new Date(), updatedAt: new Date() },
-      { nome: 'Ana Oliveira', usuario: 'ana', senha: 'senha123', foto: 'ana.jpg', permissao: 'USER', setor_id: 4, createdAt: new Date(), updatedAt: new Date() },
-      { nome: 'Pedro Santos', usuario: 'pedro', senha: 'senha123', foto: 'pedro.jpg', permissao: 'USER', setor_id: 5, createdAt: new Date(), updatedAt: new Date() },
-      
+      { nome: 'João Silva', usuario: 'joao.silva', senha: '123456', foto: 'joao.jpg', setor_id: setoresIds[0], permissao: 'admin', createdAt: new Date(), updatedAt: new Date() },
+      { nome: 'Maria Santos', usuario: 'maria.santos', senha: '123456', foto: 'maria.jpg', setor_id: setoresIds[1], permissao: 'user', createdAt: new Date(), updatedAt: new Date() },
+      { nome: 'Pedro Oliveira', usuario: 'pedro.oliveira', senha: '123456', foto: 'pedro.jpg', setor_id: setoresIds[2], permissao: 'user', createdAt: new Date(), updatedAt: new Date() }
     ], {});
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     await queryInterface.bulkDelete('Pessoas', null, {});
   }
 };
