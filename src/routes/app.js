@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 
 const routes = (app) => {
     app.route('/').get((req, res) => {
@@ -7,6 +8,7 @@ const routes = (app) => {
     
     app.use(
         express.json(),
+        require('./imageRoutes'),
         require('./SetorRoutes'),
         require('./PedidoRoutes'),
         require('./PessoaRoutes'),

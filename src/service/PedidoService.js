@@ -29,6 +29,7 @@ class PedidoService extends Service {
     }
   }
 
+  
   async getAll(filters = {}) {
     try {
       return await super.getAll(filters, null, {

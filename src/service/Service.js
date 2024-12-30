@@ -56,8 +56,19 @@ class Service {
 
     async getById(id, options = {}) {
         try {
-            return await dataSource[this.model].findByPk(id, options);
+            console.log('Service getById - ID recebido:', id, 'tipo:', typeof id);
+            const numericId = parseInt(id, 10);
+            console.log('Service getById - ID convertido:', numericId, 'tipo:', typeof numericId);
+            if (isNaN(numericId)) {
+                throw new Error('ID deve ser um número válido');
+            }
+            const result = await dataSource[this.model].findByPk(numericId, options);
+            if (!result) {
+                throw new Error('Registro não encontrado');
+            }
+            return result;
         } catch (error) {
+            console.error('Service getById - Erro:', error.message);
             throw new Error(`Error fetching data by ID for ${this.model}: ${error.message}`);
         }
     }
@@ -78,9 +89,9 @@ class Service {
         }
     }
 
-    async deleteData(params) {
+    async deleteData(id) {
         try {
-            return await dataSource[this.model].destroy({ where: { ...params } });
+            return await dataSource[this.model].destroy({where: {id}});
         } catch (error) {
             throw new Error(`Error deleting data for ${this.model}: ${error.message}`);
         }
