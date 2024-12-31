@@ -53,13 +53,10 @@ class Controller{
     async DeletarData(req, res){
         try{
             const {id} = req.params;
-            console.log(`ID recebido para deleção: ${id}`); // Log do ID recebido
-            const data = await this.service.deleteData(id);
-            console.log(`Resultado da deleção: ${JSON.stringify(data)}`); // Log do resultado da deleção
+            const data = await this.service.deleteData({ id: id });
             res.status(200).json(data);
         }
         catch(error){
-            console.error(`Erro ao deletar: ${error.message}`); // Log de erro
             res.status(500).json({ error: error.message });
         }
     

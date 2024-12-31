@@ -89,9 +89,9 @@ class Service {
         }
     }
 
-    async deleteData(id) {
+    async deleteData(params) {
         try {
-            return await dataSource[this.model].destroy({where: {id}});
+            return await dataSource[this.model].destroy({ where: { ...params } });
         } catch (error) {
             throw new Error(`Error deleting data for ${this.model}: ${error.message}`);
         }

@@ -1,4 +1,4 @@
-const PessoaController = require('../controller/PessoaController')
+const PessoaController = require('../controllers/PessoaController')
 /**
  * Express module for creating the router.
  */

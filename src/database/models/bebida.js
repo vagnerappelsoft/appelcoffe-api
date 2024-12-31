@@ -17,7 +17,10 @@ module.exports = (sequelize, DataTypes) => {
     nome: DataTypes.STRING,
     descricao: DataTypes.TEXT,
     preco: DataTypes.DECIMAL,
-    imagem: DataTypes.STRING,
+    imagem: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     status: {
       type: DataTypes.ENUM,
       values: ['Ativo', 'Inativo'],

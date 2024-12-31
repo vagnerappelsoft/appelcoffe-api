@@ -1,4 +1,4 @@
-const SetorController = require('../controller/SetorController')
+const SetorController = require('../controllers/SetorController')
 const express = require('express')
 
 const setorController = new SetorController

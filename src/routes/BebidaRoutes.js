@@ -1,4 +1,4 @@
-const BebidaController = require('../controller/BebidaController')
+const BebidaController = require('../controllers/BebidaController')
 const express = require('express')
 
 const bebidaController = new BebidaController()

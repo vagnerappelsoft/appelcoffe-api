@@ -1,4 +1,4 @@
-const PedidoController = require('../controller/PedidoController')
+const PedidoController = require('../controllers/PedidoController')
 const express = require('express')
 
 const pedidoController = new PedidoController()
