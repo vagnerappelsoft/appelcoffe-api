@@ -33,24 +33,25 @@ class Service {
         }
     }
 
-
-    async getAll(){
+    async getAll(filters = {}, attributes = null, options = {}){
         try {
-            const data = await dataSource[this.model].findAll();
-            return data
+            const queryOptions = {
+                ...options,
+                where: filters || {}
+            };
+
+            if (attributes) {
+                queryOptions.attributes = attributes;
+            }
+
+            const data = await dataSource[this.model].findAll(queryOptions);
+            return data;
         } catch (error) {
-            
+            throw new Error(`Error fetching data for ${this.model}: ${error.message}`);
         }
     }
 
-
-
-
-
-
-
-    
-   async getAll22(filters = {}, attributes = null, options = {}) {
+    async getAll22(filters = {}, attributes = null, options = {}) {
         try {
             const queryOptions = { 
                 where: filters,

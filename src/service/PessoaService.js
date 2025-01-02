@@ -10,22 +10,26 @@ class PessoaService extends Service {
   async getListagemPessoa(page = 1, limit = 12, filters = {}, include = []) {
     try {
       const offset = (page - 1) * limit;
-      const options = {
+      
+      // Merge dos includes padrão com os includes recebidos
+      const mergedIncludes = include.map(inc => ({
+        ...inc,
+        required: true
+      }));
+
+      const allItems = await this.getAll(filters, null, {
         attributes: ['id', 'foto', 'nome', 'setor_id'],
-        include,
-        where: filters,
+        include: mergedIncludes,
         limit,
         offset,
         order: [['id', 'DESC']]
-      };
-      
-      const allItems = await this.getAll(null, null, options);
-      const count = await Pessoa.count({ 
-        where: filters,
-        include
       });
       
-      // Transformar a resposta para incluir o nome do setor ao invés do ID
+      const count = await Pessoa.count({ 
+        where: filters,
+        include: mergedIncludes
+      });
+      
       const transformedItems = allItems.map(item => {
         const plainItem = item.get({ plain: true });
         return {
@@ -39,9 +43,9 @@ class PessoaService extends Service {
       return {
         items: transformedItems,
         totalItems: count,
-        currentPage: page,
+        currentPage: parseInt(page),
         totalPages: Math.ceil(count / limit),
-        itemsPerPage: limit
+        itemsPerPage: parseInt(limit)
       };
     } catch (error) {
       throw new Error(`Error fetching paginated pessoas: ${error.message}`);

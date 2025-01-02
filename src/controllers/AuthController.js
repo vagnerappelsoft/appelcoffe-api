@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { Pessoa } = require('../database/models');
+const { Pessoa, Setor } = require('../database/models');
 require('dotenv').config();
 
 class AuthController {
@@ -8,15 +8,14 @@ class AuthController {
 
         try {
             const pessoa = await Pessoa.findOne({ 
-                where: { usuario } },
-            include: {
-                model: Setor,
-                as: 'Setor',
-                attributes: ['nome'],
-                required: true
-            }
-        )
-    }
+                where: { usuario },
+                include: {
+                    model: Setor,
+                    as: 'Setor',
+                    attributes: ['nome'],
+                    required: true
+                }
+            });
 
             if (!pessoa) {
                 return res.status(401).json({ error: 'Usuário não encontrado' });
@@ -48,6 +47,7 @@ class AuthController {
             res.status(500).json({ error: error.message });
         }
     }
+}
 
 
 module.exports = new AuthController();

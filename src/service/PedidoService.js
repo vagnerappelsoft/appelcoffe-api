@@ -9,27 +9,32 @@ class PedidoService extends Service {
   async getListagemPedido(page = 1, limit = 12, filters = {}, include = []) {
     try {
       const offset = (page - 1) * limit;
-      const options = {
+
+      // Merge dos includes padrão com os includes recebidos
+      const mergedIncludes = include.map(inc => ({
+        ...inc,
+        required: true
+      }));
+
+      const allItems = await this.getAll(filters, null, {
         attributes: ['id', 'bebida_id', 'cliente_id', 'unitario', 'total', 'data_compra', 'quantidade'],
-        include,
-        where: filters,
+        include: mergedIncludes,
         limit,
         offset,
         order: [['id', 'DESC']]
-      };
+      });
 
-      const allItems = await this.getAll(filters, null, options);
       const count = await Pedido.count({
         where: filters,
-        include
+        include: mergedIncludes
       });
 
       const transformedItems = allItems.map(item => {
         const plainItem = item.get({ plain: true });
         return {
           id: plainItem.id,
-          bebida: plainItem.bebida.nome,    // Alterado para usar o alias correto
-          cliente: plainItem.cliente.nome,   // Alterado para usar o alias correto
+          bebida: plainItem.bebida.nome,
+          cliente: plainItem.cliente.nome,
           unitario: plainItem.unitario,
           total: plainItem.total,
           data_compra: plainItem.data_compra,
@@ -40,10 +45,10 @@ class PedidoService extends Service {
       return {
         items: transformedItems,
         totalItems: count,
-        currentPage: page,
+        currentPage: parseInt(page),
         totalPages: Math.ceil(count / limit),
-        itemsPerPage: limit
-      }
+        itemsPerPage: parseInt(limit)
+      };
     } catch (error) {
       throw new Error(`Error fetching paginated data for ${this.model}: ${error.message}`);
     }
