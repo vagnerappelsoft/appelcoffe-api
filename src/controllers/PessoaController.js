@@ -1,6 +1,7 @@
 const Controller = require("./Controller");
 const PessoaService = require("../service/PessoaService");
 const { Op } = require('sequelize');
+const { Setor } = require('../database/models');
 
 const pessoaService = new PessoaService();
 
@@ -15,19 +16,34 @@ class PessoaController extends Controller {
                 page = 1, 
                 limit = 12, 
                 nome,
-                setor_id
+                setor,
+                status,
+                id
             } = req.query;
             
             // Construir objeto de filtros
             const filters = {};
-            
+            const include = [{
+                model: Setor,
+                as: 'Setor',
+                attributes: ['nome'],
+                required: true
+            }];
+
+            if (id) filters.id = { [Op.like]: `%${id}%` };
+            if (status) filters.status = status;
             if (nome) filters.nome = { [Op.like]: `%${nome}%` };
-            if (setor_id) filters.setor_id = setor_id;
+            if (setor) {
+                include[0].where = {
+                    nome: { [Op.like]: `%${setor}%` }
+                };
+            }
 
             const data = await this.service.getListagemPessoa(
                 parseInt(page),
                 parseInt(limit),
-                filters
+                filters,
+                include
             );
             
             res.status(200).json(data);

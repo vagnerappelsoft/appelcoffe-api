@@ -11,13 +11,13 @@ class BebidaController extends Controller{
 
     async listarDadosFiltradosBebidas(req, res){
         try{
-            const { page = 1, limit = 12, nome, preco, status } = req.query;
+            const { page = 1, limit = 12, id, nome, preco, status } = req.query;
             
             // Construir objeto de filtros
             const filters = {};
+            if (id) filters.id = { [Op.like]: `%${id}%` };
             if (nome) filters.nome = { [Op.like]: `%${nome}%` };
-            if (preco) filters.preco = preco;
-            if (status) filters.status = status;
+            if (status) filters.status = { [Op.like]: `%${status}%` };
 
             const data = await this.service.getListagemBebida(
                 parseInt(page),

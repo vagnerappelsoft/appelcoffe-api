@@ -26,7 +26,8 @@ module.exports = (sequelize, DataTypes) => {
     cliente_id: DataTypes.INTEGER,
     unitario: DataTypes.DECIMAL,
     total: DataTypes.DECIMAL,
-    data_compra: DataTypes.DATE
+    data_compra: DataTypes.DATE,
+    quantidade: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Pedido',

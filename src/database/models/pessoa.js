@@ -11,7 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Pessoa.belongsTo(models.Setor, {
-        foreignKey: 'setor_id'
+        foreignKey: 'setor_id',
+        as: 'Setor'
       });
     }
   }
