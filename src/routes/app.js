@@ -12,7 +12,8 @@ const routes = (app) => {
         require('./SetorRoutes'),
         require('./PedidoRoutes'),
         require('./PessoaRoutes'),
-        require('./BebidaRoutes')
+        require('./BebidaRoutes'),
+        require('./authRoutes')
     );
 }    
 

@@ -1,25 +1,35 @@
 'use strict';
+const bcrypt = require('bcryptjs');
+
 const {
   Model
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Pessoa extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
       Pessoa.belongsTo(models.Setor, {
         foreignKey: 'setor_id',
         as: 'Setor'
       });
     }
+
+    checkPassword(senha) {
+      return bcrypt.compare(senha, this.senha);
+    }
   }
+
   Pessoa.init({
     nome: DataTypes.STRING,
-    usuario: DataTypes.STRING,
-    senha: DataTypes.STRING,
+    usuario: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false
+    },
+    senha: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     foto: DataTypes.STRING,
     setor_id: {
       type: DataTypes.INTEGER,
@@ -35,6 +45,20 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     }
   }, {
+    hooks: {
+      beforeCreate: async (pessoa, options) => {
+        if (pessoa.senha) {
+          const salt = await bcrypt.genSaltSync(7);
+          pessoa.senha = bcrypt.hashSync(pessoa.senha, salt);
+        }
+      },
+      beforeUpdate: async (pessoa, options) => {
+        if (pessoa.changed('senha')) {
+          const salt = await bcrypt.genSaltSync(7);
+          pessoa.senha = bcrypt.hashSync(pessoa.senha, salt);
+        }
+      }
+    },
     sequelize,
     modelName: 'Pessoa',
     tableName: 'Pessoas',
@@ -42,5 +66,6 @@ module.exports = (sequelize, DataTypes) => {
     paranoid: true,
     deletedAt: 'deleted_at'
   });
+
   return Pessoa;
 };

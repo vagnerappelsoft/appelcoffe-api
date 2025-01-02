@@ -3,8 +3,6 @@ const dataSource =  require('../database/models')
 class Service {
     constructor(model) {
         this.model = model;
-        console.log(`Service initialized with model: ${model}`);
-        console.log(`Available models: ${Object.keys(dataSource)}`);
     }
 
     async getPaginated(page = 1, limit = 12, filters = {}, attributes = null) {
@@ -35,7 +33,24 @@ class Service {
         }
     }
 
-   async getAll(filters = {}, attributes = null, options = {}) {
+
+    async getAll(){
+        try {
+            const data = await dataSource[this.model].findAll();
+            return data
+        } catch (error) {
+            
+        }
+    }
+
+
+
+
+
+
+
+    
+   async getAll22(filters = {}, attributes = null, options = {}) {
         try {
             const queryOptions = { 
                 where: filters,
