@@ -7,7 +7,6 @@ const routes = (app) => {
     });
     
     app.use(
-        express.json(),
         require('./imageRoutes'),
         require('./SetorRoutes'),
         require('./PedidoRoutes'),
