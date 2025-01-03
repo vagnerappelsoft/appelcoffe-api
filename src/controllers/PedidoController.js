@@ -22,39 +22,55 @@ class PedidoController extends Controller {
                 dataFim
             } = req.query;
             
-            // Construir objeto de filtros
             const filters = {};
             const include = [
                 {
                     model: Bebida,
-                    as: 'bebida',  // Adicionando o alias 'bebida'
+                    as: 'bebida',
                     attributes: ['nome'],
-                    required: true
+                    required: false
                 },
                 {
                     model: Pessoa,
-                    as: 'cliente', // Adicionando o alias 'cliente'
+                    as: 'cliente',
                     attributes: ['nome'],
-                    required: true
+                    required: false
                 }
             ];
             
-            if(id) filters.id = {[Op.like]: `%${id}%`};
+            if (id) {
+                filters.id = isNaN(id) ? { [Op.like]: `%${id}%` } : parseInt(id);
+            }
+            
             if (cliente) {
+                include[1].required = true;
                 include[1].where = {
                     nome: { [Op.like]: `%${cliente}%` }
                 };
             }
+            
             if (bebida) {
+                include[0].required = true;
                 include[0].where = {
                     nome: { [Op.like]: `%${bebida}%` }
                 };
             }
+            
             if (dataInicio && dataFim) {
-                filters.data_compra = {
-                    [Op.between]: [new Date(dataInicio), new Date(dataFim)]
-                };
+                try {
+                    const inicio = new Date(dataInicio);
+                    const fim = new Date(dataFim);
+                    if (!isNaN(inicio.getTime()) && !isNaN(fim.getTime())) {
+                        filters.data_compra = {
+                            [Op.between]: [inicio, fim]
+                        };
+                    }
+                } catch (error) {
+                    console.error('Erro ao processar datas:', error);
+                }
             }
+
+            console.log('Filtros:', { filters, include });
             
             const data = await this.service.getListagemPedido(
                 parseInt(page),
@@ -63,9 +79,13 @@ class PedidoController extends Controller {
                 include
             );
             
-            res.status(200).json(data);
+            return res.status(200).json(data);
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            console.error('Erro ao listar pedidos:', error);
+            return res.status(500).json({ 
+                error: 'Erro ao processar a requisição',
+                details: error.message 
+            });
         }
     }
 

@@ -10,15 +10,9 @@ class PedidoService extends Service {
     try {
       const offset = (page - 1) * limit;
 
-      // Merge dos includes padrão com os includes recebidos
-      const mergedIncludes = include.map(inc => ({
-        ...inc,
-        required: true
-      }));
-
       const allItems = await this.getAll(filters, null, {
         attributes: ['id', 'bebida_id', 'cliente_id', 'unitario', 'total', 'data_compra', 'quantidade'],
-        include: mergedIncludes,
+        include: include,
         limit,
         offset,
         order: [['id', 'DESC']]
@@ -26,15 +20,15 @@ class PedidoService extends Service {
 
       const count = await Pedido.count({
         where: filters,
-        include: mergedIncludes
+        include: include.filter(inc => inc.required)
       });
 
       const transformedItems = allItems.map(item => {
         const plainItem = item.get({ plain: true });
         return {
           id: plainItem.id,
-          bebida: plainItem.bebida.nome,
-          cliente: plainItem.cliente.nome,
+          bebida: plainItem.bebida?.nome || '',
+          cliente: plainItem.cliente?.nome || '',
           unitario: plainItem.unitario,
           total: plainItem.total,
           data_compra: plainItem.data_compra,
