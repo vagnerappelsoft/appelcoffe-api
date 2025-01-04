@@ -13,6 +13,7 @@ app.use(cors({
 
 // Middleware de JSON para parsear o corpo das requisições
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Registra todas as rotas
 routes(app);

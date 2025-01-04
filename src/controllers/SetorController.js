@@ -8,13 +8,7 @@ class SetorController extends Controller {
         super(setorService);
     }
 
-    async handleRequest(req, res, next) {
-        try {
-            await super.handleRequest(req, res, next);
-        } catch (error) {
-            next(error);
-        }
-    }
+   
 }
 
 module.exports = SetorController;

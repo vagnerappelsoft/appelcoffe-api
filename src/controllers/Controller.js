@@ -53,7 +53,7 @@ class Controller{
     async DeletarData(req, res){
         try{
             const {id} = req.params;
-            const data = await this.service.deleteData({ id: id });
+            const data = await this.service.deleteData({ id });
             res.status(200).json(data);
         }
         catch(error){

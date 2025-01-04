@@ -40,6 +40,7 @@ const router = Router();
  *       400:
  *         description: Erro ao enviar imagem
  */
+// Rota para upload de imagem
 router.post('/:type/:id/upload', upload.single('foto'), imageController.uploadImage);
 
 /**
@@ -68,6 +69,7 @@ router.post('/:type/:id/upload', upload.single('foto'), imageController.uploadIm
  *       404:
  *         description: Imagem não encontrada
  */
-router.delete('/:type/:id', imageController.deleteImage);
+// Rota para deletar imagem
+router.delete('/:type/:id/delete', imageController.deleteImage);
 
 module.exports = router;

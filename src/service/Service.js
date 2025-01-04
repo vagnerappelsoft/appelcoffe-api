@@ -51,24 +51,7 @@ class Service {
         }
     }
 
-    async getAll22(filters = {}, attributes = null, options = {}) {
-        try {
-            const queryOptions = { 
-                where: filters,
-                include: [{
-                    all: true,
-                    nested: true
-                }],
-                ...options
-            }; 
-            if (attributes) {
-                queryOptions.attributes = attributes;
-            }
-            return await dataSource[this.model].findAll(queryOptions);
-        } catch (error) {
-            throw new Error(`Error fetching all data for ${this.model}: ${error.message}`);
-        }
-    }
+   
 
     async getById(id, options = {}) {
         try {

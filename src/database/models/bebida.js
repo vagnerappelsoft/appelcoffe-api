@@ -14,7 +14,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Bebida.init({
-    nome: DataTypes.STRING,
+    nome: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    },
     descricao: DataTypes.TEXT,
     preco: DataTypes.DECIMAL,
     imagem: {

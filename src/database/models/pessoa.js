@@ -20,7 +20,11 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   Pessoa.init({
-    nome: DataTypes.STRING,
+    nome: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    },
     usuario: {
       type: DataTypes.STRING,
       unique: true,

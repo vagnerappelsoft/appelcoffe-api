@@ -39,7 +39,7 @@ class PedidoController extends Controller {
             ];
             
             if (id) {
-                filters.id = isNaN(id) ? { [Op.like]: `%${id}%` } : parseInt(id);
+                filters.id = { [Op.like]: `%${id}%` };
             }
             
             if (cliente) {
