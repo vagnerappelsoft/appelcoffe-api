@@ -64,7 +64,7 @@ route.get('/pessoas/listagem', (req, res) => pessoaController.listarDadosFiltrad
  *       404:
  *         description: Pessoa não encontrada
  */
-route.get('/pessoas/:id', (req, res) => pessoaController.ListarId(req, res))
+route.get('/pessoas/:id', (req, res) => pessoaController.listarIdPessoa(req, res))
 
 /**
  * @swagger

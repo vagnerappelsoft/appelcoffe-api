@@ -52,12 +52,18 @@ class Service {
     }
 
    
+    async getAllSame(){
+        try {
+            const data = await dataSource[this.model].findAll();
+            return data;
+        } catch (error) {
+            throw new Error(`Error fetching data for ${this.model}: ${error.message}`);
+        }
+    }
 
     async getById(id, options = {}) {
         try {
-            console.log('Service getById - ID recebido:', id, 'tipo:', typeof id);
             const numericId = parseInt(id, 10);
-            console.log('Service getById - ID convertido:', numericId, 'tipo:', typeof numericId);
             if (isNaN(numericId)) {
                 throw new Error('ID deve ser um número válido');
             }

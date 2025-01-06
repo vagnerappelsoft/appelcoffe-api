@@ -10,6 +10,17 @@ class PessoaController extends Controller {
         super(pessoaService);
     }
 
+
+    async listarIdPessoa(req, res) {
+        try {
+            const { id } = req.params;
+            const data = await this.service.getByIdPessoa({ id });
+            res.status(200).json(data);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
     async listarDadosFiltradosPessoas(req, res) {
         try {
             const { 

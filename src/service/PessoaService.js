@@ -7,6 +7,38 @@ class PessoaService extends Service {
     super('Pessoa');
   }
 
+
+  async getByIdPessoa(params) {
+    try {
+      const item = await Pessoa.findOne({
+        where: { id: params.id },
+        include: [{
+          model: Setor,
+          as: 'Setor',
+          attributes: ['nome']
+        }]
+      });
+
+      if (!item) {
+        throw new Error('Pessoa não encontrada');
+      }
+
+      const plainItem = item.get({ plain: true });
+      return {
+        id: plainItem.id,
+        nome: plainItem.nome,
+        foto: plainItem.foto,
+        usuario: plainItem.usuario,
+        senha: plainItem.senha,
+        setor: plainItem.Setor.nome,
+        permissao: plainItem.permissao
+      };
+
+    } catch (error) {
+      throw new Error(`Error fetching pessoa: ${error.message}`);
+    }
+  }
+
   async getListagemPessoa(page = 1, limit = 12, filters = {}, include = []) {
     try {
       const offset = (page - 1) * limit;

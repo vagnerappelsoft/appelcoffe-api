@@ -9,6 +9,18 @@ class BebidaController extends Controller{
         super(bebidaService);
     }
 
+
+    async ListaPorIdBebida(req, res){
+        try{
+            const {id} = req.params;
+            const data = await this.service.getById(id);
+            res.status(200).json(data);
+        }
+        catch(error){
+            res.status(500).json({error: error.message});
+        }
+    }
+
     async listarDadosFiltradosBebidas(req, res){
         try{
             const { page = 1, limit = 12, id, nome, preco, status } = req.query;
