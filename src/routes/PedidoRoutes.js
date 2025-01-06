@@ -4,6 +4,7 @@ const express = require('express')
 const pedidoController = new PedidoController()
 const route = express.Router()
 
+
 /**
  * @swagger
  * /pedidos:
@@ -14,6 +15,7 @@ const route = express.Router()
  *       200:
  *         description: Lista de pedidos retornada com sucesso
  */
+
 route.get('/pedidos', (req, res) => pedidoController.ListarData(req, res))
 
 /**

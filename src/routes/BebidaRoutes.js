@@ -4,30 +4,19 @@ const express = require('express')
 const bebidaController = new BebidaController()
 const route = express.Router()
 
+
 /**
  * @swagger
  * /bebidas:
  *   get:
- *     summary: Lista todas as bebidas
+ *     summary: Lista bebidas 
  *     tags: [Bebidas]
  *     responses:
  *       200:
- *         description: Lista de bebidas retornada com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                   nome:
- *                     type: string
- *                   preco:
- *                     type: number
+ *         description: Lista Bebidas
  */
 route.get('/bebidas', (req, res) => bebidaController.ListarData(req, res))
+
 
 /**
  * @swagger

@@ -7,6 +7,9 @@ const express = require('express')
 const pessoaController = new PessoaController()
 const route = express.Router()
 
+
+
+
 /**
  * @swagger
  * /pessoas:
@@ -16,25 +19,11 @@ const route = express.Router()
  *     responses:
  *       200:
  *         description: Lista de pessoas retornada com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                   nome:
- *                     type: string
- *                   email:
- *                     type: string
- *                   setorId:
- *                     type: integer
  */
-route.get('/pessoas', (req, res) => pessoaController.ListarData(req, res))
 
+route.get('/pessoas', (req, res) => pessoaController.ListarData(req, res))
 /**
+ * 
  * @swagger
  * /pessoas/listagem:
  *   get:
