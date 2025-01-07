@@ -21,7 +21,7 @@ const route = express.Router()
  *         description: Lista de pessoas retornada com sucesso
  */
 
-route.get('/pessoas', (req, res) => pessoaController.ListarData(req, res))
+route.get('/pessoas', (req, res) => pessoaController.listarTodosPessoas(req, res))
 /**
  * 
  * @swagger

@@ -39,6 +39,39 @@ class PessoaService extends Service {
     }
   }
 
+  async getTodasPessoascomSetor() {
+    try {
+      const pessoas = await Pessoa.findAll({
+        include: [{
+          model: Setor,
+          as: 'Setor',
+          attributes: ['id', 'nome'],
+          required: true
+        }]
+      });
+
+      const transformedPessoas = pessoas.map(pessoa => {
+        const plainPessoa = pessoa.get({ plain: true });
+        return {
+          id: plainPessoa.id,
+          foto: plainPessoa.foto,
+          nome: plainPessoa.nome,
+          setor: {
+            id: plainPessoa.Setor.id,
+            nome: plainPessoa.Setor.nome
+          },
+          usuario: plainPessoa.usuario,
+          senha: plainPessoa.senha,
+          permissao: plainPessoa.permissao
+        };
+      });
+
+      return transformedPessoas;
+    } catch (error) {
+      throw new Error(`Error fetching pessoas: ${error.message}`);
+    }
+  }
+
   async getListagemPessoa(page = 1, limit = 12, filters = {}, include = []) {
     try {
       const offset = (page - 1) * limit;
