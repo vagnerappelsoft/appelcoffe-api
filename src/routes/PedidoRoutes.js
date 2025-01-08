@@ -128,4 +128,25 @@ route.post('/pedidos', (req, res) => pedidoController.CriarData(req, res))
  */
 route.delete('/pedidos/:id', (req, res) => pedidoController.DeletarData(req, res))
 
+
+/**
+ * @swagger
+ * /pedidos/{id}/restore:
+ *   patch:
+ *     summary: Restaura um pedido 
+ *     tags: [Pedidos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Pedido restaurado com sucesso
+ *       404:
+ *         description: Pedido não encontrado
+ */
+route.patch('/pedidos/:id/restore', (req, res) => pedidoController.restaurarData(req, res))
+
 module.exports = route

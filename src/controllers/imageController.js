@@ -5,13 +5,19 @@ const { v4: uuidv4 } = require('uuid');
 const { Pessoa, Bebida } = require('../database/models');
 
 class ImageController {
-  async uploadImage(req, res) {
+  async uploadCadastroImage(req, res) {
     try {
       if (!req.file) {
         return res.status(400).json({ error: 'Nenhuma imagem foi enviada' });
       }
 
-      const { type, id } = req.params; // type pode ser 'pessoa' ou 'bebida'
+      const { tipo } = req.params;
+
+      const validTipos = ['pessoas', 'bebidas'];
+      
+      if (!validTipos.includes(tipo)) {
+        return res.status(400).json({ error: 'Tipo de cadastro inválido' });
+      }
 
       // Processa a imagem com sharp
       const processedImage = await sharp(req.file.buffer)
@@ -19,77 +25,124 @@ class ImageController {
         .jpeg({ quality: 80 })
         .toBuffer();
 
-      // Cria um nome único para o arquivo
-      const fileName = `${type}_${uuidv4()}.jpg`;
+      // Cria um nome único para o arquivo temporário
+      const tempFileName = `temp_${uuidv4()}.jpg`;
       
-      // Define o diretório de uploads específico para o tipo
-      const uploadDir = path.join(__dirname, '..', 'uploads', type);
-      await fs.mkdir(uploadDir, { recursive: true });
+      // Define o diretório temporário específico para o tipo
+      const tempDir = path.join(__dirname, '..', 'uploads', 'temp');
+      await fs.mkdir(tempDir, { recursive: true });
 
-      // Salva a imagem processada
-      const filePath = path.join(uploadDir, fileName);
-      await fs.writeFile(filePath, processedImage);
+      // Salva a imagem processada no diretório temporário
+      const tempFilePath = path.join(tempDir, tempFileName);
+      await fs.writeFile(tempFilePath, processedImage);
 
-      // Caminho relativo para salvar no banco de dados
-      const imageUrl = `/uploads/${type}/${fileName}`;
+      // Retorna o caminho temporário da imagem para preview
+      const previewUrl = `/uploads/temp/${tempFileName}`;
 
-      // Atualiza o registro no banco de dados
-      if (type === 'pessoas') {
-        const pessoa = await Pessoa.findByPk(id);
-        if (!pessoa) {
-          return res.status(404).json({ error: 'Pessoa não encontrada' });
-        }
-        await pessoa.update({ foto: imageUrl });
-      } else if (type === 'bebidas') {
-        const bebida = await Bebida.findByPk(id);
-        if (!bebida) {
-          return res.status(404).json({ error: 'Bebida não encontrada' });
-        }
-        await bebida.update({ imagem: imageUrl });
-      } else {
-        return res.status(400).json({ error: 'Tipo inválido' });
-      }
-      
-      return res.json({
-        success: true,
-        imageUrl,
-        message: 'Imagem enviada com sucesso'
+      return res.status(200).json({
+        message: 'Imagem enviada com sucesso',
+        previewUrl,
+        tempFileName // Vamos precisar deste nome para mover o arquivo depois
       });
-
     } catch (error) {
-      console.error('Erro no upload da imagem:', error);
-      return res.status(500).json({
-        error: 'Erro ao processar o upload da imagem',
-        details: error.message
-      });
+      console.error('Erro no upload de imagem:', error);
+      return res.status(500).json({ error: 'Erro ao processar o upload da imagem' });
     }
   }
 
+
+
+
+  async uploadImage(req, res) {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'Nenhuma imagem foi enviada' });
+      }
+
+      const { tipo, id } = req.params;
+
+      // Validar o tipo
+      const validTipos = ['pessoas', 'bebidas'];
+      if (!validTipos.includes(tipo)) {
+        return res.status(400).json({ error: 'Tipo inválido' });
+      }
+
+      // Processa a imagem com sharp
+      const processedImage = await sharp(req.file.buffer)
+        .resize(800, 800, { fit: 'inside' })
+        .jpeg({ quality: 80 })
+        .toBuffer();
+
+      // Cria um nome único para o arquivo temporário
+      const tempFileName = `temp_${uuidv4()}.jpg`;
+      
+      // Define o diretório temporário
+      const tempDir = path.join(__dirname, '..', 'uploads', 'temp');
+      await fs.mkdir(tempDir, { recursive: true });
+
+      // Salva a imagem processada no diretório temporário
+      const tempFilePath = path.join(tempDir, tempFileName);
+      await fs.writeFile(tempFilePath, processedImage);
+
+      // Retorna o caminho temporário da imagem para preview
+      const previewUrl = `/uploads/temp/${tempFileName}`;
+
+      // Busca o registro para verificar se existe
+      let model;
+      switch (tipo) {
+        case 'pessoas':
+          model = Pessoa;
+          break;
+        case 'bebidas':
+          model = Bebida;
+          break;
+      }
+
+      const record = await model.findByPk(id);
+      if (!record) {
+        // Se o registro não existe, remove o arquivo temporário
+        await fs.unlink(tempFilePath);
+        return res.status(404).json({ error: `${tipo} não encontrado` });
+      }
+
+      return res.status(200).json({
+        message: 'Imagem enviada com sucesso',
+        previewUrl,
+        tempFileName,
+        currentImage: record.imagem // Retorna a imagem atual também
+      });
+    } catch (error) {
+      console.error('Erro no upload de imagem:', error);
+      return res.status(500).json({ error: 'Erro ao processar o upload da imagem', details: error.message });
+    }
+  }
+
+
+
+
+
   async deleteImage(req, res) {
     try {
-      const { type, id } = req.params;
+      const { tipo, id } = req.params;
 
       let model;
-      let imageField;
 
-      if (type === 'pessoa') {
+      if (tipo === 'pessoas') {
         model = Pessoa;
-        imageField = 'foto';
-      } else if (type === 'bebida') {
+      } else if (tipo === 'bebidas') {
         model = Bebida;
-        imageField = 'imagem';
       } else {
         return res.status(400).json({ error: 'Tipo inválido' });
       }
 
       const record = await model.findByPk(id);
       if (!record) {
-        return res.status(404).json({ error: `${type} não encontrado(a)` });
+        return res.status(404).json({ error: `${tipo} não encontrado(a)` });
       }
 
       // Se houver uma imagem antiga, deleta ela
-      if (record[imageField]) {
-        const oldImagePath = path.join(__dirname, '..', record[imageField]);
+      if (record.imagem) {
+        const oldImagePath = path.join(__dirname, '..', record.imagem);
         try {
           await fs.unlink(oldImagePath);
         } catch (error) {
@@ -98,7 +151,7 @@ class ImageController {
       }
 
       // Atualiza o registro para remover a referência da imagem
-      await record.update({ [imageField]: null });
+      await record.update({ imagem: null });
 
       return res.json({
         success: true,
@@ -111,6 +164,78 @@ class ImageController {
         error: 'Erro ao deletar imagem',
         details: error.message
       });
+    }
+  }
+
+  // Método utilitário para mover imagem da pasta temp para definitiva
+  async moveImageFromTemp(tempFileName, tipo) {
+    if (!tempFileName) return null;
+
+    try {
+      // Caminho do arquivo temporário
+      const tempPath = path.join(__dirname, '..', 'uploads', 'temp', tempFileName);
+      console.log('Caminho temporário:', tempPath);
+
+      // Verifica se o arquivo existe
+      try {
+        await fs.access(tempPath);
+        console.log('Arquivo temporário encontrado');
+      } catch (error) {
+        console.error('Arquivo temporário não encontrado:', tempFileName);
+        return null;
+      }
+
+      // Cria um novo nome para o arquivo definitivo
+      const finalFileName = `${tipo}_${uuidv4()}.jpg`;
+      console.log('Nome do arquivo final:', finalFileName);
+      
+      // Define o diretório definitivo
+      const uploadDir = path.join(__dirname, '..', 'uploads', tipo);
+      console.log('Diretório de upload:', uploadDir);
+      await fs.mkdir(uploadDir, { recursive: true });
+
+      // Caminho definitivo do arquivo
+      const finalPath = path.join(uploadDir, finalFileName);
+      console.log('Caminho final:', finalPath);
+
+      // Move o arquivo
+      await fs.rename(tempPath, finalPath);
+      console.log('Arquivo movido com sucesso');
+
+      // Retorna o caminho relativo para salvar no banco
+      const relativePath = path.join('uploads', tipo, finalFileName).replace(/\\/g, '/');
+      console.log('Caminho relativo retornado:', relativePath);
+      return relativePath;
+    } catch (error) {
+      console.error('Erro ao mover imagem:', error);
+      return null;
+    }
+  }
+
+  // Método para limpar imagens temporárias antigas
+  async cleanupTempImages() {
+    try {
+      const tempDir = path.join(__dirname, '..', 'uploads', 'temp');
+      const files = await fs.readdir(tempDir);
+      
+      const oneHourAgo = Date.now() - (60 * 60 * 1000); // 1 hora em milissegundos
+
+      for (const file of files) {
+        const filePath = path.join(tempDir, file);
+        const stats = await fs.stat(filePath);
+        
+        // Remove arquivos temporários com mais de 1 hora
+        if (stats.mtimeMs < oneHourAgo) {
+          try {
+            await fs.unlink(filePath);
+            console.log('Arquivo temporário removido:', file);
+          } catch (error) {
+            console.error('Erro ao remover arquivo temporário:', file, error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao limpar arquivos temporários:', error);
     }
   }
 }

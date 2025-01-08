@@ -27,7 +27,7 @@ class PessoaService extends Service {
       return {
         id: plainItem.id,
         nome: plainItem.nome,
-        foto: plainItem.foto,
+        imagem: plainItem.imagem,
         usuario: plainItem.usuario,
         senha: plainItem.senha,
         setor: plainItem.Setor.nome,
@@ -54,7 +54,7 @@ class PessoaService extends Service {
         const plainPessoa = pessoa.get({ plain: true });
         return {
           id: plainPessoa.id,
-          foto: plainPessoa.foto,
+          imagem: plainPessoa.imagem,
           nome: plainPessoa.nome,
           setor: {
             id: plainPessoa.Setor.id,
@@ -83,7 +83,7 @@ class PessoaService extends Service {
       }));
 
       const allItems = await this.getAll(filters, null, {
-        attributes: ['id', 'foto', 'nome', 'setor_id'],
+        attributes: ['id', 'imagem', 'nome', 'setor_id'],
         include: mergedIncludes,
         limit,
         offset,
@@ -99,7 +99,7 @@ class PessoaService extends Service {
         const plainItem = item.get({ plain: true });
         return {
           id: plainItem.id,
-          foto: plainItem.foto,
+          imagem: plainItem.imagem,
           nome: plainItem.nome,
           setor: plainItem.Setor.nome
         };

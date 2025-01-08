@@ -86,7 +86,7 @@ route.get('/pessoas/:id', (req, res) => pessoaController.listarIdPessoa(req, res
  *       404:
  *         description: Pessoa não encontrada
  */
-route.put('/pessoas/:id', (req, res) => pessoaController.ModificarData(req, res))
+route.put('/pessoas/:id', (req, res) => pessoaController.updatePessoa(req, res))
 
 /**
  * @swagger
@@ -111,7 +111,7 @@ route.put('/pessoas/:id', (req, res) => pessoaController.ModificarData(req, res)
  *       201:
  *         description: Pessoa criada com sucesso
  */
-route.post('/pessoas', (req, res) => pessoaController.CriarData(req, res))
+route.post('/pessoas', (req, res) => pessoaController.createPessoa(req, res))
 
 /**
  * @swagger
@@ -132,5 +132,26 @@ route.post('/pessoas', (req, res) => pessoaController.CriarData(req, res))
  *         description: Pessoa não encontrada
  */
 route.delete('/pessoas/:id', (req, res) => pessoaController.DeletarData(req, res))
+
+
+/**
+ * @swagger
+ * /pessoas/{id}/restore:
+ *   patch:
+ *     summary: Restaura uma pessoa  
+ *     tags: [Pessoas]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Pessoa restaurada com sucesso
+ *       404:
+ *         description: Pessoa não encontrada
+ */
+route.patch('/pessoas/:id/restore', (req, res) => pessoaController.restaurarData(req, res))
 
 module.exports = route

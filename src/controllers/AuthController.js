@@ -37,7 +37,7 @@ class AuthController {
                     usuario: pessoa.usuario,
                     permissao: pessoa.permissao,
                     setor: pessoa.Setor.nome,
-                    foto: pessoa.foto,
+                    imagem: pessoa.imagem,
                 },
                 token,
                 tipo: `Usuário com permissão: ${pessoa.permissao}`

@@ -101,6 +101,26 @@ class Service {
             throw new Error(`Error deleting data for ${this.model}: ${error.message}`);
         }
     }
+
+    async restaurarRegistro(id) {
+        try {
+            const registro = await dataSource[this.model].findOne({
+                where: { id: id }
+            });
+
+            if (registro) {
+                throw new Error('Você não pode restaurar um registro que ainda existe');
+            }
+
+            await dataSource[this.model].restore({
+                where: { id: id }
+            });
+
+            return registro;
+        } catch (error) {
+            throw new Error(`Error restoring record for ${this.model}: ${error.message}`);
+        }
+    }
 }
 
 module.exports = Service;

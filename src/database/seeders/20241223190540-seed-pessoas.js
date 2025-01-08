@@ -11,9 +11,9 @@ module.exports = {
     const setoresIds = setores[0].map(setor => setor.id);
 
     await queryInterface.bulkInsert('Pessoas', [
-      { nome: 'João Silva', usuario: 'joao.silva', senha: '123456', foto: 'joao.jpg', setor_id: setoresIds[0], permissao: 'admin', createdAt: new Date(), updatedAt: new Date() },
-      { nome: 'Maria Santos', usuario: 'maria.santos', senha: '123456', foto: 'maria.jpg', setor_id: setoresIds[1], permissao: 'user', createdAt: new Date(), updatedAt: new Date() },
-      { nome: 'Pedro Oliveira', usuario: 'pedro.oliveira', senha: '123456', foto: 'pedro.jpg', setor_id: setoresIds[2], permissao: 'user', createdAt: new Date(), updatedAt: new Date() }
+      { nome: 'João Silva', usuario: 'joao.silva', senha: '123456', imagem: 'joao.jpg', setor_id: setoresIds[0], permissao: 'admin', createdAt: new Date(), updatedAt: new Date() },
+      { nome: 'Maria Santos', usuario: 'maria.santos', senha: '123456', imagem: 'maria.jpg', setor_id: setoresIds[1], permissao: 'user', createdAt: new Date(), updatedAt: new Date() },
+      { nome: 'Pedro Oliveira', usuario: 'pedro.oliveira', senha: '123456', imagem: 'pedro.jpg', setor_id: setoresIds[2], permissao: 'user', createdAt: new Date(), updatedAt: new Date() }
     ], {});
   },
 

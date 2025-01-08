@@ -6,33 +6,33 @@ const router = Router();
 
 /**
  * @swagger
- * /{type}/{id}/upload:
+ * /{tipo}/{id}/upload:
  *   post:
  *     summary: Faz upload de uma imagem para pessoa ou bebida
  *     tags: [Images]
  *     parameters:
  *       - in: path
- *         name: type
+ *         name: tipo
  *         required: true
  *         schema:
- *           type: string
- *           enum: [pessoa, bebida]
- *         description: Tipo do objeto (pessoa ou bebida)
+ *           tipo: string
+ *           enum: [pessoas, bebidas]
+ *         description: Tipo do objeto (pessoa, bebida)
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
+ *           tipo: integer
  *         description: ID do objeto
  *     requestBody:
  *       required: true
  *       content:
  *         multipart/form-data:
  *           schema:
- *             type: object
+ *             tipo: object
  *             properties:
- *               foto:
- *                 type: string
+ *               imagem:
+ *                 tipo: string
  *                 format: binary
  *     responses:
  *       200:
@@ -41,27 +41,27 @@ const router = Router();
  *         description: Erro ao enviar imagem
  */
 // Rota para upload de imagem
-router.post('/:type/:id/upload', upload.single('foto'), imageController.uploadImage);
+router.post('/:tipo/:id/upload', upload.single('imagem'), imageController.uploadImage);
 
 /**
  * @swagger
- * /{type}/{id}:
+ * /{tipo}/{id}/deleteImage:
  *   delete:
  *     summary: Remove uma imagem
  *     tags: [Images]
  *     parameters:
  *       - in: path
- *         name: type
+ *         name: tipo
  *         required: true
  *         schema:
- *           type: string
- *           enum: [pessoa, bebida]
+ *           tipo: string
+ *           enum: [pessoas, bebidas]
  *         description: Tipo do objeto (pessoa ou bebida)
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
+ *           tipo: integer
  *         description: ID do objeto
  *     responses:
  *       200:
@@ -70,6 +70,42 @@ router.post('/:type/:id/upload', upload.single('foto'), imageController.uploadIm
  *         description: Imagem não encontrada
  */
 // Rota para deletar imagem
-router.delete('/:type/:id/delete', imageController.deleteImage);
+router.delete('/:tipo/:id/deleteImage', imageController.deleteImage);
+
+
+
+/**
+ * @swagger
+ * /{tipo}/upload-cadastro:
+ *   post:
+ *     summary: Faz upload de uma imagem durante o cadastro
+ *     tags: [Images]
+ *     parameters:
+ *       - in: path
+ *         name: tipo
+ *         required: true
+ *         schema:
+ *           tipo: string
+ *           enum: [pessoas, bebidas]
+ *         description: Tipo do cadastro (pessoa, bebida )
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             tipo: object
+ *             properties:
+ *               image:
+ *                 tipo: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Imagem enviada com sucesso
+ *       400:
+ *         description: Erro na requisição
+ *       500:
+ *         description: Erro interno do servidor
+ */
+router.post('/:tipo/upload-cadastro', upload.single('imagem'), imageController.uploadCadastroImage);
 
 module.exports = router;

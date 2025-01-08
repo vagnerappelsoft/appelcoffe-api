@@ -124,4 +124,25 @@ route.post('/bebidas', (req, res) => bebidaController.CriarData(req, res))
  */
 route.delete('/bebidas/:id', (req, res) => bebidaController.DeletarData(req, res))
 
+
+/**
+ * @swagger
+ * /bebidas/{id}/restore:
+ *   patch:
+ *     summary: Restaura uma bebida  
+ *     tags: [Bebidas]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Bebida restaurada com sucesso
+ *       404:
+ *         description: Bebida não encontrada
+ */
+route.patch('/bebidas/:id/restore', (req, res) => bebidaController.restaurarData(req, res))
+
 module.exports = route
