@@ -1,6 +1,8 @@
 const { Router } = require('express');
 const upload = require('../middlewares/uploadConfig');
 const imageController = require('../controllers/imageController');
+const path = require('path');
+const fs = require('fs');
 
 const router = Router();
 
@@ -72,8 +74,6 @@ router.post('/:tipo/:id/upload', upload.single('imagem'), imageController.upload
 // Rota para deletar imagem
 router.delete('/:tipo/:id/deleteImage', imageController.deleteImage);
 
-
-
 /**
  * @swagger
  * /{tipo}/upload-cadastro:
@@ -107,5 +107,28 @@ router.delete('/:tipo/:id/deleteImage', imageController.deleteImage);
  *         description: Erro interno do servidor
  */
 router.post('/:tipo/upload-cadastro', upload.single('imagem'), imageController.uploadCadastroImage);
+
+// Rota para servir imagens temporárias
+router.get('/temp/:tipo/:filename', async (req, res) => {
+    const { tipo, filename } = req.params;
+    const imagePath = path.join('uploads', 'temp', tipo, filename);
+    console.log('Tentando acessar imagem em:', imagePath);
+    
+    try {
+        // Verifica se o arquivo existe
+        await fs.access(imagePath);
+        console.log('Arquivo encontrado');
+        
+        // Define o tipo de conteúdo
+        res.setHeader('Content-Type', 'image/jpeg');
+        
+        // Lê e envia o arquivo
+        const fileStream = fs.createReadStream(imagePath);
+        fileStream.pipe(res);
+    } catch (error) {
+        console.error('Erro ao servir imagem:', error);
+        res.status(404).send('Imagem não encontrada');
+    }
+});
 
 module.exports = router;

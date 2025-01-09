@@ -29,29 +29,40 @@ class ImageController {
       const tempFileName = `temp_${uuidv4()}.jpg`;
       
       // Define o diretório temporário específico para o tipo
-      const tempDir = path.join(__dirname, '..', 'uploads', 'temp');
+      const tempDir = path.join('uploads', 'temp', tipo);
+      console.log('Temporary directory path:', tempDir);
+      
       await fs.mkdir(tempDir, { recursive: true });
 
       // Salva a imagem processada no diretório temporário
       const tempFilePath = path.join(tempDir, tempFileName);
+      console.log('Saving image to:', tempFilePath);
       await fs.writeFile(tempFilePath, processedImage);
 
+      // Verifica se o arquivo foi criado corretamente
+      try {
+        const fileExists = await fs.access(tempFilePath).then(() => true).catch(() => false);
+        console.log('File exists:', fileExists);
+        const stats = await fs.stat(tempFilePath);
+        console.log('File size:', stats.size, 'bytes');
+      } catch (error) {
+        console.error('Error checking file:', error);
+      }
+
       // Retorna o caminho temporário da imagem para preview
-      const previewUrl = `/uploads/temp/${tempFileName}`;
+      const previewUrl = `/api/images/temp/${tipo}/${tempFileName}`;
+      console.log('Preview URL:', previewUrl); // Para debug
 
       return res.status(200).json({
         message: 'Imagem enviada com sucesso',
         previewUrl,
-        tempFileName // Vamos precisar deste nome para mover o arquivo depois
+        tempFileName
       });
     } catch (error) {
       console.error('Erro no upload de imagem:', error);
       return res.status(500).json({ error: 'Erro ao processar o upload da imagem' });
     }
   }
-
-
-
 
   async uploadImage(req, res) {
     try {
@@ -77,15 +88,25 @@ class ImageController {
       const tempFileName = `temp_${uuidv4()}.jpg`;
       
       // Define o diretório temporário
-      const tempDir = path.join(__dirname, '..', 'uploads', 'temp');
+      const tempDir = path.join('uploads', 'temp', tipo);
       await fs.mkdir(tempDir, { recursive: true });
 
       // Salva a imagem processada no diretório temporário
       const tempFilePath = path.join(tempDir, tempFileName);
       await fs.writeFile(tempFilePath, processedImage);
 
+      // Verifica se o arquivo foi criado corretamente
+      try {
+        const fileExists = await fs.access(tempFilePath).then(() => true).catch(() => false);
+        console.log('File exists:', fileExists);
+        const stats = await fs.stat(tempFilePath);
+        console.log('File size:', stats.size, 'bytes');
+      } catch (error) {
+        console.error('Error checking file:', error);
+      }
+
       // Retorna o caminho temporário da imagem para preview
-      const previewUrl = `/uploads/temp/${tempFileName}`;
+      const previewUrl = `/api/images/temp/${tipo}/${tempFileName}`;
 
       // Busca o registro para verificar se existe
       let model;
@@ -117,10 +138,6 @@ class ImageController {
     }
   }
 
-
-
-
-
   async deleteImage(req, res) {
     try {
       const { tipo, id } = req.params;
@@ -142,7 +159,7 @@ class ImageController {
 
       // Se houver uma imagem antiga, deleta ela
       if (record.imagem) {
-        const oldImagePath = path.join(__dirname, '..', record.imagem);
+        const oldImagePath = path.join('uploads', record.imagem);
         try {
           await fs.unlink(oldImagePath);
         } catch (error) {
@@ -173,7 +190,7 @@ class ImageController {
 
     try {
       // Caminho do arquivo temporário
-      const tempPath = path.join(__dirname, '..', 'uploads', 'temp', tempFileName);
+      const tempPath = path.join('uploads', 'temp', tipo, tempFileName);
       console.log('Caminho temporário:', tempPath);
 
       // Verifica se o arquivo existe
@@ -190,7 +207,7 @@ class ImageController {
       console.log('Nome do arquivo final:', finalFileName);
       
       // Define o diretório definitivo
-      const uploadDir = path.join(__dirname, '..', 'uploads', tipo);
+      const uploadDir = path.join('uploads', tipo);
       console.log('Diretório de upload:', uploadDir);
       await fs.mkdir(uploadDir, { recursive: true });
 
@@ -215,22 +232,27 @@ class ImageController {
   // Método para limpar imagens temporárias antigas
   async cleanupTempImages() {
     try {
-      const tempDir = path.join(__dirname, '..', 'uploads', 'temp');
-      const files = await fs.readdir(tempDir);
+      const tempDir = path.join('uploads', 'temp');
+      const dirs = await fs.readdir(tempDir);
       
-      const oneHourAgo = Date.now() - (60 * 60 * 1000); // 1 hora em milissegundos
-
-      for (const file of files) {
-        const filePath = path.join(tempDir, file);
-        const stats = await fs.stat(filePath);
+      for (const dir of dirs) {
+        const dirPath = path.join(tempDir, dir);
+        const files = await fs.readdir(dirPath);
         
-        // Remove arquivos temporários com mais de 1 hora
-        if (stats.mtimeMs < oneHourAgo) {
-          try {
-            await fs.unlink(filePath);
-            console.log('Arquivo temporário removido:', file);
-          } catch (error) {
-            console.error('Erro ao remover arquivo temporário:', file, error);
+        const oneHourAgo = Date.now() - (60 * 60 * 1000); // 1 hora em milissegundos
+
+        for (const file of files) {
+          const filePath = path.join(dirPath, file);
+          const stats = await fs.stat(filePath);
+          
+          // Remove arquivos temporários com mais de 1 hora
+          if (stats.mtimeMs < oneHourAgo) {
+            try {
+              await fs.unlink(filePath);
+              console.log('Arquivo temporário removido:', file);
+            } catch (error) {
+              console.error('Erro ao remover arquivo temporário:', file, error);
+            }
           }
         }
       }
