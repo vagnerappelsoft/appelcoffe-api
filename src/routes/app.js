@@ -6,7 +6,6 @@ const routes = (app) => {
     });
     
     app.use(
-        require('./imageRoutes'),
         require('./SetorRoutes'),
         require('./PedidoRoutes'),
         require('./PessoaRoutes'),

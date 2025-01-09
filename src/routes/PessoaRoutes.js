@@ -86,7 +86,7 @@ route.get('/pessoas/:id', (req, res) => pessoaController.listarIdPessoa(req, res
  *       404:
  *         description: Pessoa não encontrada
  */
-route.put('/pessoas/:id', (req, res) => pessoaController.updatePessoa(req, res))
+route.put('/pessoas/:id', (req, res) => pessoaController.ModificarData(req, res))
 
 /**
  * @swagger
@@ -111,7 +111,7 @@ route.put('/pessoas/:id', (req, res) => pessoaController.updatePessoa(req, res))
  *       201:
  *         description: Pessoa criada com sucesso
  */
-route.post('/pessoas', (req, res) => pessoaController.createPessoa(req, res))
+route.post('/pessoas', (req, res) => pessoaController.CriarData(req, res))
 
 /**
  * @swagger

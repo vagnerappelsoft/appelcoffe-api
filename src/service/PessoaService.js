@@ -29,7 +29,6 @@ class PessoaService extends Service {
         nome: plainItem.nome,
         imagem: plainItem.imagem,
         usuario: plainItem.usuario,
-        senha: plainItem.senha,
         setor: plainItem.Setor.nome,
         permissao: plainItem.permissao
       };

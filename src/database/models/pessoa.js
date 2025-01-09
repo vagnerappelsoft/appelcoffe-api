@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     imagem: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true
     },
     setor_id: {
