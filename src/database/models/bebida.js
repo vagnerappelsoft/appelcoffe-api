@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     descricao: DataTypes.TEXT,
     preco: DataTypes.DECIMAL,
     imagem: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true
     },
     status: {

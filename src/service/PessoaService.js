@@ -15,7 +15,8 @@ class PessoaService extends Service {
         include: [{
           model: Setor,
           as: 'Setor',
-          attributes: ['nome']
+          attributes: ['id', 'nome'],
+          required: true
         }]
       });
 
@@ -29,7 +30,10 @@ class PessoaService extends Service {
         nome: plainItem.nome,
         imagem: plainItem.imagem,
         usuario: plainItem.usuario,
-        setor: plainItem.Setor.nome,
+        setor: {
+          id: plainItem.Setor.id,
+          nome: plainItem.Setor.nome
+        },
         permissao: plainItem.permissao
       };
 
@@ -37,6 +41,43 @@ class PessoaService extends Service {
       throw new Error(`Error fetching pessoa: ${error.message}`);
     }
   }
+
+  async createPessoa(data) {
+    try {
+      // Se receber setor ao invés de setor_id, faz a adaptação
+      if (data.setor && !data.setor_id) {
+        data.setor_id = data.setor.id || data.setor;
+        delete data.setor;
+      }
+  
+      const novaPessoa = await Pessoa.create(data);
+      
+      // Retorna a pessoa criada com os dados do setor
+      return this.getByIdPessoa({ id: novaPessoa.id });
+    } catch (error) {
+      throw new Error(`Erro ao criar pessoa: ${error.message}`);
+    }
+  }
+
+  async updatePessoa(id, data) {
+    try {
+      // Se receber setor ao invés de setor_id, faz a adaptação
+      if (data.setor && !data.setor_id) {
+        data.setor_id = data.setor.id || data.setor;
+        delete data.setor;
+      }
+
+      await Pessoa.update(data, {
+        where: { id }
+      });
+      
+      // Retorna a pessoa atualizada com os dados do setor
+      return this.getByIdPessoa({ id });
+    } catch (error) {
+      throw new Error(`Erro ao atualizar pessoa: ${error.message}`);
+    }
+  }
+  
 
   async getTodasPessoascomSetor() {
     try {

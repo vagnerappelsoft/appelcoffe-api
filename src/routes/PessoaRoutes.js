@@ -59,7 +59,7 @@ route.get('/pessoas/:id', (req, res) => pessoaController.listarIdPessoa(req, res
  * @swagger
  * /pessoas/{id}:
  *   put:
- *     summary: Atualiza uma pessoa
+ *     summary: Atualiza uma pessoa pelo ID
  *     tags: [Pessoas]
  *     parameters:
  *       - in: path
@@ -67,26 +67,11 @@ route.get('/pessoas/:id', (req, res) => pessoaController.listarIdPessoa(req, res
  *         required: true
  *         schema:
  *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               nome:
- *                 type: string
- *               email:
- *                 type: string
- *               setorId:
- *                 type: integer
  *     responses:
  *       200:
  *         description: Pessoa atualizada com sucesso
- *       404:
- *         description: Pessoa não encontrada
  */
-route.put('/pessoas/:id', (req, res) => pessoaController.ModificarData(req, res))
+route.put('/pessoas/:id', (req, res) => pessoaController.atualizarPessoa(req, res))
 
 /**
  * @swagger
@@ -111,7 +96,7 @@ route.put('/pessoas/:id', (req, res) => pessoaController.ModificarData(req, res)
  *       201:
  *         description: Pessoa criada com sucesso
  */
-route.post('/pessoas', (req, res) => pessoaController.CriarData(req, res))
+route.post('/pessoas', (req, res) => pessoaController.criarPessoa(req, res))
 
 /**
  * @swagger

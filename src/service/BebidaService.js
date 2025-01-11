@@ -6,7 +6,7 @@ class BebidaService extends Service{
     }
 
     async getListagemBebida(page = 1, limit = 12, filters = {}) {
-        const attributes = ['id', 'nome', 'preco', 'status'];
+        const attributes = ['id', 'imagem', 'nome', 'preco', 'status'];
         return await this.getPaginated(page, limit, filters, attributes);
     }
 

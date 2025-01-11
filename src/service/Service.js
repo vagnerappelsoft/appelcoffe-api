@@ -86,6 +86,7 @@ class Service {
         }
     }
 
+
     async createData(data) {
         try {
             return await dataSource[this.model].create(data);
