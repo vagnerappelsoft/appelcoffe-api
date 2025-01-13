@@ -98,6 +98,27 @@ class PedidoController extends Controller {
             res.status(500).json({ error: error.message });
         }
     }
+
+    async getClientStats(req, res) {
+        try {
+            const { month, year } = req.query;
+            
+            if (!month || !year) {
+                const today = new Date();
+                const currentMonth = today.getMonth() + 1;
+                const currentYear = today.getFullYear();
+                
+                const data = await pedidoService.getClientStats(currentMonth, currentYear);
+                return res.status(200).json(data);
+            }
+
+            const data = await pedidoService.getClientStats(parseInt(month), parseInt(year));
+            return res.status(200).json(data);
+        } catch (error) {
+            console.error('Error in getClientStats:', error);
+            return res.status(500).json({ error: error.message });
+        }
+    }
 }
 
 module.exports = PedidoController;

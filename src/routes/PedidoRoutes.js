@@ -149,4 +149,27 @@ route.delete('/pedidos/:id', (req, res) => pedidoController.DeletarData(req, res
  */
 route.patch('/pedidos/:id/restore', (req, res) => pedidoController.restaurarData(req, res))
 
+/**
+ * @swagger
+ * /pedidos/relatorio :
+ *   get:
+ *     summary: Obtém estatísticas de compras dos clientes por mês
+ *     tags: [Pedidos]
+ *     parameters:
+ *       - in: query
+ *         name: month
+ *         schema:
+ *           type: integer
+ *         description: Mês para filtrar (1-12). Se não fornecido, usa o mês atual
+ *       - in: query
+ *         name: year
+ *         schema:
+ *           type: integer
+ *         description: Ano para filtrar. Se não fornecido, usa o ano atual
+ *     responses:
+ *       200:
+ *         description: Estatísticas de compras dos clientes retornadas com sucesso
+ */
+route.get('/pedidos/relatorio', (req, res) => pedidoController.getClientStats(req, res))
+
 module.exports = route
