@@ -1,6 +1,6 @@
 const Service = require('./Service');
-const { Bebida, Pessoa, Pedido } = require('../database/models');
-const { Op, sequelize: dataSource } = require('sequelize');
+const { Bebida, Pessoa, Pedido, sequelize } = require('../database/models');
+const { Op, Sequelize } = require('sequelize');
 
 class PedidoService extends Service {
   constructor() {
@@ -49,20 +49,21 @@ class PedidoService extends Service {
     }
   }
 
-  async getidPedido(id) {
+  async getidPedido(params) {
     try {
-      const pedido = await Pedido.findByPk(id, {
+      const pedido = await Pedido.findOne({
+        where: { id: params.id },
         include: [
           {
             model: Bebida,
             as: 'bebida',  // Adicionando o alias 'bebida'
-            attributes: ['nome'],
+            attributes: ['id', 'nome'],
             required: true
           },
           {
             model: Pessoa,
             as: 'cliente', // Adicionando o alias 'cliente'
-            attributes: ['nome'],
+            attributes: ['id', 'nome'],
             required: true
           }
         ]
@@ -72,52 +73,111 @@ class PedidoService extends Service {
         return null;
       }
 
-      return {
-        id: pedido.id,
-        bebida: pedido.bebida.nome,    // Alterado para usar o alias correto
-        cliente: pedido.cliente.nome,   // Alterado para usar o alias correto
-        unitario: pedido.unitario,
-        total: pedido.total,
-        data_compra: pedido.data_compra,
-        quantidade: pedido.quantidade
+      const plainPedido = pedido.get({ plain: true });
+      
+      const pedidoData = {
+        id: plainPedido.id,
+        bebida: {
+          id: plainPedido.bebida.id,
+          nome: plainPedido.bebida.nome
+        },
+        cliente: {
+          id: plainPedido.cliente.id,
+          nome: plainPedido.cliente.nome
+        },
+        unitario: plainPedido.unitario,
+        total: plainPedido.total,
+        data_compra: plainPedido.data_compra,
+        quantidade: plainPedido.quantidade
       };
+
+      return pedidoData;
+
     } catch (error) {
       throw new Error(`Error fetching data for ${this.model}: ${error.message}`);
     }
   }
 
-  async getClientStats(month, year) {
+  async putPedido(id, data) {
     try {
-      const startDate = new Date(year, month - 1, 1);
-      const endDate = new Date(year, month, 0);
 
-      const results = await dataSource.Pedido.findAll({
+      const updateData = {
+        ...data,
+        bebida_id: data.bebida?.id || data.bebida_id,
+        cliente_id: data.cliente?.id || data.cliente_id
+      };
+
+      delete updateData.bebida;
+      delete updateData.cliente;
+
+      await Pedido.update(updateData, {
+        where: { id }
+      });
+
+      return this.getidPedido({ id });
+      
+    } catch (error) {
+      throw new Error(`Error updating data for ${this.model}: ${error.message}`);
+    }
+  }
+
+
+  async createPedido(data) {
+    try {
+
+      const updateData = {
+        ...data,
+        bebida_id: data.bebida?.id || data.bebida_id,
+        cliente_id: data.cliente?.id || data.cliente_id
+      };
+
+      delete updateData.bebida;
+      delete updateData.cliente;
+
+
+      const novoPedido = await Pedido.create(updateData);
+      return this.getidPedido({ id: novoPedido.id });
+    } catch (error) {
+      throw new Error(`Error creating data for ${this.model}: ${error.message}`);
+    }
+  }
+
+
+  async getClientStats(mes, ano) {
+    try {
+      // Ajustando para início do dia 1 no horário UTC
+      const startDate = new Date(Date.UTC(ano, mes - 1, 1, 0, 0, 0));
+      // Ajustando para fim do último dia do mês no horário UTC
+      const endDate = new Date(Date.UTC(ano, mes, 0, 23, 59, 59, 999));
+
+      const results = await Pedido.findAll({
         attributes: [
-          [dataSource.sequelize.fn('DATE_FORMAT', dataSource.sequelize.col('data_compra'), '%m/%Y'), 'mesAno'],
-          [dataSource.sequelize.col('cliente.nome'), 'cliente'],
-          [dataSource.sequelize.fn('COUNT', dataSource.sequelize.col('Pedido.id')), 'vezesComprou'],
-          [dataSource.sequelize.fn('SUM', dataSource.sequelize.col('total')), 'valorTotal']
+          'cliente_id',
+          [Sequelize.fn('SUM', Sequelize.col('Pedido.quantidade')), 'vezesComprou'],
+          [Sequelize.fn('SUM', Sequelize.col('Pedido.total')), 'valorTotal']
         ],
         include: [{
-          model: dataSource.Pessoa,
+          model: Pessoa,
           as: 'cliente',
-          attributes: []
+          attributes: ['nome']
         }],
         where: {
           data_compra: {
             [Op.between]: [startDate, endDate]
           }
         },
-        group: ['cliente.id', 'cliente.nome', dataSource.sequelize.fn('DATE_FORMAT', dataSource.sequelize.col('data_compra'), '%m/%Y')],
+        group: ['cliente_id', 'cliente.id', 'cliente.nome'],
         raw: true
       });
 
       return results.map(result => ({
-        ...result,
+        mesAno: `${mes.toString().padStart(2, '0')}/${ano}`,
+        cliente: result['cliente.nome'],
         vezesComprou: Number(result.vezesComprou),
         valorTotal: Number(result.valorTotal)
       }));
     } catch (error) {
+      console.error('Error in getClientStats:', error);
       throw new Error(`Error getting client statistics: ${error.message}`);
     }
   }

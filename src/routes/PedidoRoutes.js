@@ -32,6 +32,29 @@ route.get('/pedidos/listagem', (req, res) => pedidoController.listarDadosFiltrad
 
 /**
  * @swagger
+ * /pedidos/relatorio :
+ *   get:
+ *     summary: Obtém estatísticas de compras dos clientes por mês
+ *     tags: [Pedidos]
+ *     parameters:
+ *       - in: query
+ *         name: mes
+ *         schema:
+ *           type: integer
+ *         description: Mês para filtrar (1-12). Se não fornecido, usa o mês atual
+ *       - in: query
+ *         name: ano
+ *         schema:
+ *           type: integer
+ *         description: Ano para filtrar. Se não fornecido, usa o ano atual
+ *     responses:
+ *       200:
+ *         description: Estatísticas de compras dos clientes retornadas com sucesso
+ */
+route.get('/pedidos/relatorio', (req, res) => pedidoController.getClientStats(req, res))
+
+/**
+ * @swagger
  * /pedidos/{id}:
  *   get:
  *     summary: Obtém um pedido pelo ID
@@ -81,7 +104,7 @@ route.get('/pedidos/:id', (req, res) => pedidoController.listarIdPedido(req, res
  *       404:
  *         description: Pedido não encontrado
  */
-route.put('/pedidos/:id', (req, res) => pedidoController.ModificarData(req, res))
+route.put('/pedidos/:id', (req, res) => pedidoController.modificarPedido(req, res))
 
 /**
  * @swagger
@@ -106,7 +129,7 @@ route.put('/pedidos/:id', (req, res) => pedidoController.ModificarData(req, res)
  *       201:
  *         description: Pedido criado com sucesso
  */
-route.post('/pedidos', (req, res) => pedidoController.CriarData(req, res))
+route.post('/pedidos', (req, res) => pedidoController.criarPedido(req, res))
 
 /**
  * @swagger
@@ -148,28 +171,5 @@ route.delete('/pedidos/:id', (req, res) => pedidoController.DeletarData(req, res
  *         description: Pedido não encontrado
  */
 route.patch('/pedidos/:id/restore', (req, res) => pedidoController.restaurarData(req, res))
-
-/**
- * @swagger
- * /pedidos/relatorio :
- *   get:
- *     summary: Obtém estatísticas de compras dos clientes por mês
- *     tags: [Pedidos]
- *     parameters:
- *       - in: query
- *         name: month
- *         schema:
- *           type: integer
- *         description: Mês para filtrar (1-12). Se não fornecido, usa o mês atual
- *       - in: query
- *         name: year
- *         schema:
- *           type: integer
- *         description: Ano para filtrar. Se não fornecido, usa o ano atual
- *     responses:
- *       200:
- *         description: Estatísticas de compras dos clientes retornadas com sucesso
- */
-route.get('/pedidos/relatorio', (req, res) => pedidoController.getClientStats(req, res))
 
 module.exports = route

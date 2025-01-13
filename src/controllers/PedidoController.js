@@ -92,8 +92,27 @@ class PedidoController extends Controller {
    async listarIdPedido(req, res) {
         try {
             const { id } = req.params;
-            const data = await this.service.getidPedido(id);
+            const data = await this.service.getidPedido({id});
             res.status(200).json(data);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    async modificarPedido(req, res) {
+        try {
+            const { id } = req.params;
+            const data = await this.service.putPedido(id, req.body);
+            res.status(200).json(data);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    async criarPedido(req, res) {
+        try {
+            const data = await this.service.createPedido(req.body);
+            res.status(201).json(data);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -101,9 +120,9 @@ class PedidoController extends Controller {
 
     async getClientStats(req, res) {
         try {
-            const { month, year } = req.query;
+            const { mes, ano } = req.query;
             
-            if (!month || !year) {
+            if (!mes || !ano) {
                 const today = new Date();
                 const currentMonth = today.getMonth() + 1;
                 const currentYear = today.getFullYear();
@@ -112,7 +131,7 @@ class PedidoController extends Controller {
                 return res.status(200).json(data);
             }
 
-            const data = await pedidoService.getClientStats(parseInt(month), parseInt(year));
+            const data = await pedidoService.getClientStats(parseInt(mes), parseInt(ano));
             return res.status(200).json(data);
         } catch (error) {
             console.error('Error in getClientStats:', error);
