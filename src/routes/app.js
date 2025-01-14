@@ -10,7 +10,8 @@ const routes = (app) => {
         require('./PedidoRoutes'),
         require('./PessoaRoutes'),
         require('./BebidaRoutes'),
-        require('./authRoutes')
+        require('./authRoutes'),
+        require('./DiscordRoutes')
     );
 }    
 

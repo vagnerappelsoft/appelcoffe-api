@@ -121,6 +121,7 @@ class PedidoService extends Service {
     }
   }
 
+  
 
   async createPedido(data) {
     try {
@@ -145,9 +146,8 @@ class PedidoService extends Service {
 
   async getClientStats(mes, ano) {
     try {
-      // Ajustando para início do dia 1 no horário UTC
       const startDate = new Date(Date.UTC(ano, mes - 1, 1, 0, 0, 0));
-      // Ajustando para fim do último dia do mês no horário UTC
+      
       const endDate = new Date(Date.UTC(ano, mes, 0, 23, 59, 59, 999));
 
       const results = await Pedido.findAll({
