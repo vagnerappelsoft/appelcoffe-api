@@ -29,7 +29,7 @@ class BebidaService extends Service{
             const results = await Pedido.findAll({
                 attributes: [
                     'bebida_id',
-                    [Sequelize.fn('SUM', Sequelize.col('Pedido.quantidade')), 'bebidasVendidas']
+                    [Sequelize.fn('SUM', Sequelize.col('Pedido.quantidade')), 'quantidade']
                 ],
                 include: [{
                     model: Bebida,
@@ -50,7 +50,7 @@ class BebidaService extends Service{
                 id: result.bebida_id,
                 nome: result['bebida.nome'],
                 imagem: result['bebida.imagem'],
-                bebidasVendidas: parseInt(result.bebidasVendidas) || 0
+                quantidade: parseInt(result.quantidade) || 0
             }));
         } catch (error) {
             console.error('Erro ao buscar bebidas mais vendidas:', error);

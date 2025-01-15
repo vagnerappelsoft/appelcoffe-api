@@ -192,7 +192,7 @@ class PedidoService extends Service {
       const results = await Pedido.findAll({
         attributes: [
           [Sequelize.literal('DATE_FORMAT(data_compra, "%Y-%m-01")'), 'mes'],
-          [Sequelize.fn('SUM', Sequelize.col('quantidade')), 'total_vendas']
+          [Sequelize.fn('SUM', Sequelize.col('quantidade')), 'totalVendas']
         ],
         where: {
           data_compra: {
@@ -201,14 +201,14 @@ class PedidoService extends Service {
           }
         },
         group: [Sequelize.literal('DATE_FORMAT(data_compra, "%Y-%m-01")')],
-        having: Sequelize.literal('total_vendas > 0'),
+        having: Sequelize.literal('totalVendas > 0'),
         order: [Sequelize.literal('mes ASC')],
         raw: true
       });
 
       return results.map(result => ({
         mesAno: `${result.mes.split('-')[0]}-${result.mes.split('-')[1]}`,
-        total_vendas: parseInt(result.total_vendas)
+        totalVendas: parseInt(result.totalVendas)
       }));
 
     } catch (error) {
