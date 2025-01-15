@@ -22,6 +22,37 @@ const route = express.Router()
  */
 
 route.get('/pessoas', (req, res) => pessoaController.listarTodosPessoas(req, res))
+
+
+
+
+
+
+/**
+ * @swagger
+ * /pessoas/tomamMaisCafe:
+ *   get:
+ *     summary: Lista as pessoas que mais tomam café
+ *     tags: [Pessoas]
+ *     parameters:
+ *       - in: query
+ *         name: mes
+ *         schema:
+ *           type: integer
+ *         description: Mês para filtrar (1-12). Se não fornecido, busca por todos os meses
+ *       - in: query
+ *         name: ano
+ *         schema:
+ *           type: integer
+ *         description: Ano para filtrar. Se não fornecido, busca por todos os anos
+ *     responses:
+ *       200:
+ *         description: Lista das pessoas que mais tomam café
+ *       500:
+ *         description: Erro no servidor
+ */
+route.get('/pessoas/tomamMaisCafe', (req, res) => pessoaController.listarPessoasQueMaisTomamCafe(req, res))
+
 /**
  * 
  * @swagger

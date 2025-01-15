@@ -66,7 +66,7 @@ async function criarImagemRelatorio(dados) {
     
     // Configuração do canvas
     const width = 650;
-    const height = Math.max(400, rows.length * 40 + 100);
+    const height = Math.max(250, rows.length * 40 + 100);
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext('2d');
     

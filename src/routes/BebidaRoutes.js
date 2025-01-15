@@ -18,6 +18,31 @@ const route = express.Router()
 route.get('/bebidas', (req, res) => bebidaController.ListarData(req, res))
 
 
+
+/**
+ * @swagger
+ * /bebidas/maisvendidas:
+ *   get:
+ *     summary: Lista bebidas mais vendidas
+ *     tags: [Bebidas]
+ *     parameters:
+ *       - in: query
+ *         name: mes
+ *         schema:
+ *           type: integer
+ *         description: Mês para filtrar (1-12). Se não fornecido, busca por todos os meses
+ *       - in: query
+ *         name: ano
+ *         schema:
+ *           type: integer
+ *         description: Ano para filtrar. Se não fornecido, busca por todos os anos
+ *     responses:
+ *       200:
+ *         description: Lista das bebidas mais vendidas
+ */
+route.get('/bebidas/maisvendidas', (req, res) => bebidaController.listarBebidasMaisVendidas(req, res))
+
+
 /**
  * @swagger
  * /bebidas/listagem:

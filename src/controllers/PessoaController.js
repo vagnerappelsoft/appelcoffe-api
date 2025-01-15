@@ -94,6 +94,18 @@ class PessoaController extends Controller {
             res.status(500).json({ error: error.message });
         }
     }
+
+
+    async listarPessoasQueMaisTomamCafe(req, res) {
+        try {
+            const { mes, ano } = req.query;
+
+            const data = await this.service.pessoasQueMaisTomamCafe(mes, ano);
+            res.status(200).json(data);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
 }
 
 module.exports = PessoaController;

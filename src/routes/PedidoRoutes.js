@@ -18,6 +18,22 @@ const route = express.Router()
 
 route.get('/pedidos', (req, res) => pedidoController.ListarData(req, res))
 
+
+
+/**
+ * @swagger
+ * /pedidos/pedidos6meses:
+ *   get:
+ *     summary: Lista pedidos dos últimos 6 meses
+ *     tags: [Pedidos]
+ *     responses:
+ *       200:
+ *         description: Lista de pedidos dos últimos 6 meses retornada com sucesso
+ *       500:
+ *         description: Erro no servidor
+ */
+route.get('/pedidos/listarPedidos6Meses', (req, res) => pedidoController.listarPedidos6Meses(req, res))
+
 /**
  * @swagger
  * /pedidos/listagem:
@@ -171,5 +187,8 @@ route.delete('/pedidos/:id', (req, res) => pedidoController.DeletarData(req, res
  *         description: Pedido não encontrado
  */
 route.patch('/pedidos/:id/restore', (req, res) => pedidoController.restaurarData(req, res))
+
+
+
 
 module.exports = route

@@ -1,6 +1,6 @@
 const Service = require('./Service');
 const { Sequelize, Op } = require('sequelize');
-const { Pedido, Bebida } = require('../models');
+const { Pedido, Bebida } = require('../database/models');
 
 class BebidaService extends Service{
     constructor(){
@@ -29,26 +29,28 @@ class BebidaService extends Service{
             const results = await Pedido.findAll({
                 attributes: [
                     'bebida_id',
-                    [Sequelize.fn('SUM', Sequelize.col('quantidade')), 'bebidasVendidas']
+                    [Sequelize.fn('SUM', Sequelize.col('Pedido.quantidade')), 'bebidasVendidas']
                 ],
                 include: [{
                     model: Bebida,
                     as: 'bebida',
-                    attributes: ['nome', 'imagem']
+                    attributes: ['nome', 'imagem'],
+                    where: {
+                        deleted_at: null
+                    }
                 }],
                 where: whereClause,
                 group: ['bebida_id', 'bebida.id', 'bebida.nome', 'bebida.imagem'],
-                order: [[Sequelize.fn('SUM', Sequelize.col('quantidade')), 'DESC']],
+                order: [[Sequelize.fn('SUM', Sequelize.col('Pedido.quantidade')), 'DESC']],
                 limit: 5,
-                raw: true,
-                nest: true
+                raw: true
             });
 
             return results.map(result => ({
                 id: result.bebida_id,
-                nome: result.bebida.nome,
-                imagem: result.bebida.imagem,
-                total_vendas: parseInt(result.bebidasVendidas)
+                nome: result['bebida.nome'],
+                imagem: result['bebida.imagem'],
+                bebidasVendidas: parseInt(result.bebidasVendidas) || 0
             }));
         } catch (error) {
             console.error('Erro ao buscar bebidas mais vendidas:', error);

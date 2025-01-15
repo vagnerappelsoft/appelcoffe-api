@@ -1,6 +1,6 @@
 const Service = require('./Service');
-const { Setor } = require('../database/models');
-const {Pessoa} = require('../database/models');
+const {Pessoa, Setor, Pedido} = require('../database/models');
+const { Op, Sequelize } = require('sequelize');
 
 class PessoaService extends Service {
   constructor() {
@@ -10,7 +10,7 @@ class PessoaService extends Service {
 
   async getByIdPessoa(params) {
     try {
-      const item = await Pessoa.findOne({
+      const item = await Pessoa.findOne({ 
         where: { id: params.id },
         include: [{
           model: Setor,
@@ -154,6 +154,50 @@ class PessoaService extends Service {
       };
     } catch (error) {
       throw new Error(`Error fetching paginated pessoas: ${error.message}`);
+    }
+  }
+
+
+  async pessoasQueMaisTomamCafe(mes, ano){
+    try {
+      let whereClause = {};
+      
+      if (mes && ano) {
+        const startDate = new Date(Date.UTC(ano, mes - 1, 1, 0, 0, 0));
+        const endDate = new Date(Date.UTC(ano, mes, 0, 23, 59, 59, 999));
+        whereClause = {
+          data_compra: {
+            [Op.between]: [startDate, endDate]
+          }
+        };
+      }
+
+      const result = await Pedido.findAll({
+        attributes: [
+          'cliente_id',
+          [Sequelize.fn('SUM', Sequelize.col('Pedido.quantidade')), 'vezesComprou']
+        ],
+        include: [{
+          model: Pessoa,
+          as: 'cliente',
+          attributes: ['nome', 'imagem']
+        }],
+        where: whereClause,
+        group: ['cliente_id', 'cliente.id', 'cliente.nome', 'cliente.imagem'],
+        order: [[Sequelize.fn('SUM', Sequelize.col('Pedido.quantidade')), 'DESC']],
+        limit: 5,
+        raw: true
+      });
+
+      return result.map(item => ({
+        id: item.cliente_id,
+        nome: item['cliente.nome'],
+        imagem: item['cliente.imagem'],
+        vezesComprou: Number(item.vezesComprou)
+      }));
+
+    } catch (error) {
+      throw new Error(`Error fetching pessoas que mais tomam café: ${error.message}`);
     }
   }
 }

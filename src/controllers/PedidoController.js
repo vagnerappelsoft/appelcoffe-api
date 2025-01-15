@@ -138,6 +138,16 @@ class PedidoController extends Controller {
             return res.status(500).json({ error: error.message });
         }
     }
+
+    async listarPedidos6Meses(req, res) {
+        try {
+            const data = await pedidoService.pedidosTotalPorMes();
+            return res.status(200).json(data);
+        } catch (error) {
+            console.error('Error in listarPedidos6Meses:', error);
+            return res.status(500).json({ error: error.message });
+        }
+    }
 }
 
 module.exports = PedidoController;

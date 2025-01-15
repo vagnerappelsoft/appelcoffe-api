@@ -181,6 +181,41 @@ class PedidoService extends Service {
       throw new Error(`Error getting client statistics: ${error.message}`);
     }
   }
+
+
+  async pedidosTotalPorMes() {
+    try {
+
+      const hoje = new Date();
+      const seisMesesAtras = new Date(hoje.getFullYear(), hoje.getMonth() - 5, 1);
+
+      const results = await Pedido.findAll({
+        attributes: [
+          [Sequelize.literal('DATE_FORMAT(data_compra, "%Y-%m-01")'), 'mes'],
+          [Sequelize.fn('SUM', Sequelize.col('quantidade')), 'total_vendas']
+        ],
+        where: {
+          data_compra: {
+            [Op.gte]: seisMesesAtras,
+            [Op.lte]: hoje
+          }
+        },
+        group: [Sequelize.literal('DATE_FORMAT(data_compra, "%Y-%m-01")')],
+        having: Sequelize.literal('total_vendas > 0'),
+        order: [Sequelize.literal('mes ASC')],
+        raw: true
+      });
+
+      return results.map(result => ({
+        mesAno: `${result.mes.split('-')[0]}-${result.mes.split('-')[1]}`,
+        total_vendas: parseInt(result.total_vendas)
+      }));
+
+    } catch (error) {
+      console.error('Error in pedidosTotalPorMes:', error);
+      throw new Error(`Error getting total sales by month: ${error.message}`);
+    }
+  }
 }
 
 module.exports = PedidoService;
