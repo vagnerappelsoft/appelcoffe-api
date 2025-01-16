@@ -22,17 +22,50 @@ route.get('/pedidos', (req, res) => pedidoController.ListarData(req, res))
 
 /**
  * @swagger
- * /pedidos/pedidos6meses:
+ * /pedidos/listarPedidosPorMes:
  *   get:
- *     summary: Lista pedidos dos últimos 6 meses
+ *     summary: Lista o total de pedidos por mês dentro de um intervalo
+ *     description: Se nenhuma data for fornecida, retorna os pedidos do mês atual. Caso contrário, retorna os pedidos dentro do intervalo especificado.
  *     tags: [Pedidos]
+ *     parameters:
+ *       - in: query
+ *         name: mesInicial
+ *         required: false
+ *         schema:
+ *           type: string
+ *           pattern: '^\d{4}-\d{2}$'
+ *         example: "2024-01"
+ *         description: Mês inicial no formato YYYY-MM. Se não fornecido, usa o mês atual.
+ *       - in: query
+ *         name: mesFinal
+ *         required: false
+ *         schema:
+ *           type: string
+ *           pattern: '^\d{4}-\d{2}$'
+ *         example: "2024-12"
+ *         description: Mês final no formato YYYY-MM. Se não fornecido, usa o mês atual.
  *     responses:
  *       200:
- *         description: Lista de pedidos dos últimos 6 meses retornada com sucesso
+ *         description: Lista de totais de pedidos por mês
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   anoMes:
+ *                     type: string
+ *                     example: "2024/01"
+ *                   totalVendas:
+ *                     type: number
+ *                     example: 150
+ *       400:
+ *         description: Erro de validação (formato de data inválido ou apenas uma data fornecida)
  *       500:
- *         description: Erro no servidor
+ *         description: Erro interno do servidor
  */
-route.get('/pedidos/listarPedidos6Meses', (req, res) => pedidoController.listarPedidos6Meses(req, res))
+route.get('/pedidos/listarPedidosPorMes', (req, res) => pedidoController.listarPedidosPorMes(req, res))
 
 /**
  * @swagger
@@ -108,12 +141,19 @@ route.get('/pedidos/:id', (req, res) => pedidoController.listarIdPedido(req, res
  *           schema:
  *             type: object
  *             properties:
- *               status:
- *                 type: string
- *               bebidaId:
- *                 type: integer
- *               pessoaId:
- *                 type: integer
+ *               id: number
+ *               bebida: {
+ *                 id: number,
+ *                 nome: string,
+ *                  }
+ *               pessoa: {
+ *                 id: number,
+ *                 nome: string,
+ *               }
+ *               unitario: string
+ *               total: string
+ *               data_compra: string
+ *               quantidade: string
  *     responses:
  *       200:
  *         description: Pedido atualizado com sucesso
@@ -135,12 +175,18 @@ route.put('/pedidos/:id', (req, res) => pedidoController.modificarPedido(req, re
  *           schema:
  *             type: object
  *             properties:
- *               status:
- *                 type: string
- *               bebidaId:
- *                 type: integer
- *               pessoaId:
- *                 type: integer
+ *               bebida: {
+ *                 id: number,
+ *                 nome: string,
+ *                  }
+ *               pessoa: {
+ *                 id: number,
+ *                 nome: string,
+ *               }
+ *               unitario: string
+ *               total: string
+ *               data_compra: string
+ *               quantidade: string
  *     responses:
  *       201:
  *         description: Pedido criado com sucesso

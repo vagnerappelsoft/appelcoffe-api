@@ -1,7 +1,4 @@
 const PessoaController = require('../controllers/PessoaController')
-/**
- * Express module for creating the router.
- */
 const express = require('express')
 
 const pessoaController = new PessoaController()
@@ -93,11 +90,22 @@ route.get('/pessoas/:id', (req, res) => pessoaController.listarIdPessoa(req, res
  *     summary: Atualiza uma pessoa pelo ID
  *     tags: [Pessoas]
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
+ * 
+ *              id: number
+ *              nome:
+ *                 type: string
+ *               imagem:
+ *                 type: string
+ *               usuario:
+ *                 type: string
+ *               senha:
+ *                 type: string
+ *               setor: {
+ *                 id: number,
+ *                 nome: string
+ *               }
+ *               permissao:
+ *                 type: Enum
  *     responses:
  *       200:
  *         description: Pessoa atualizada com sucesso
@@ -119,10 +127,18 @@ route.put('/pessoas/:id', (req, res) => pessoaController.atualizarPessoa(req, re
  *             properties:
  *               nome:
  *                 type: string
- *               email:
+ *               imagem:
  *                 type: string
- *               setorId:
- *                 type: integer
+ *               usuario:
+ *                 type: string
+ *               senha:
+ *                 type: string
+ *               setor: {
+ *                 id: number,
+ *                 nome: string
+ *               }
+ *               permissao:
+ *                 type: Enum
  *     responses:
  *       201:
  *         description: Pessoa criada com sucesso

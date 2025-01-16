@@ -183,37 +183,34 @@ class PedidoService extends Service {
   }
 
 
-  async pedidosTotalPorMes() {
+  async pedidosTotalPorMes(dataInicial, dataFinal) {
     try {
-
-      const hoje = new Date();
-      const seisMesesAtras = new Date(hoje.getFullYear(), hoje.getMonth() - 5, 1);
+      if (!dataInicial || !dataFinal) {
+        throw new Error('Data inicial e final são obrigatórias');
+      }
 
       const results = await Pedido.findAll({
         attributes: [
-          [Sequelize.literal('DATE_FORMAT(data_compra, "%Y-%m-01")'), 'mes'],
+          [Sequelize.literal('DATE_FORMAT(data_compra, "%Y/%m")'), 'anoMes'],
           [Sequelize.fn('SUM', Sequelize.col('quantidade')), 'totalVendas']
         ],
         where: {
           data_compra: {
-            [Op.gte]: seisMesesAtras,
-            [Op.lte]: hoje
+            [Op.gte]: dataInicial,
+            [Op.lte]: dataFinal
           }
         },
-        group: [Sequelize.literal('DATE_FORMAT(data_compra, "%Y-%m-01")')],
-        having: Sequelize.literal('totalVendas > 0'),
-        order: [Sequelize.literal('mes ASC')],
+        group: [Sequelize.literal('DATE_FORMAT(data_compra, "%Y/%m")')],
+        order: [[Sequelize.literal('anoMes'), 'DESC']],
         raw: true
       });
 
       return results.map(result => ({
-        mesAno: `${result.mes.split('-')[0]}-${result.mes.split('-')[1]}`,
-        totalVendas: parseInt(result.totalVendas)
+        anoMes: result.anoMes,
+        totalVendas: Number(result.totalVendas)
       }));
-
     } catch (error) {
-      console.error('Error in pedidosTotalPorMes:', error);
-      throw new Error(`Error getting total sales by month: ${error.message}`);
+      throw new Error(`Error getting monthly sales totals: ${error.message}`);
     }
   }
 }

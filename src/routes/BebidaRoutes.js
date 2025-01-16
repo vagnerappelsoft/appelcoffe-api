@@ -47,7 +47,7 @@ route.get('/bebidas/maisvendidas', (req, res) => bebidaController.listarBebidasM
  * @swagger
  * /bebidas/listagem:
  *   get:
- *     summary: Lista bebidas com filtros
+ *     summary: Lista bebidas com filtros e paginação
  *     tags: [Bebidas]
  *     responses:
  *       200:
@@ -96,8 +96,14 @@ route.get('/bebidas/:id', (req, res) => bebidaController.ListarId(req, res))
  *             properties:
  *               nome:
  *                 type: string
+ *               descricao:
+ *                 type: string
+ *               imagem:
+ *                 type: string
  *               preco:
  *                 type: number
+ *               status:
+ *                 type: Enum
  *     responses:
  *       200:
  *         description: Bebida atualizada com sucesso
@@ -121,8 +127,14 @@ route.put('/bebidas/:id', (req, res) => bebidaController.ModificarData(req, res)
  *             properties:
  *               nome:
  *                 type: string
+ *               descricao:
+ *                 type: string
+ *               imagem:
+ *                 type: string
  *               preco:
  *                 type: number
+ *               status:
+ *                 type: Enum
  *     responses:
  *       201:
  *         description: Bebida criada com sucesso
@@ -154,7 +166,7 @@ route.delete('/bebidas/:id', (req, res) => bebidaController.DeletarData(req, res
  * @swagger
  * /bebidas/{id}/restore:
  *   patch:
- *     summary: Restaura uma bebida  
+ *     summary: Restaura uma bebida (A coluna deleted_at recebe NULL)
  *     tags: [Bebidas]
  *     parameters:
  *       - in: path

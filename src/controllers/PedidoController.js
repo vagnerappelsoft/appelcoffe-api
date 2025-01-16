@@ -139,12 +139,44 @@ class PedidoController extends Controller {
         }
     }
 
-    async listarPedidos6Meses(req, res) {
+    async listarPedidosPorMes(req, res) {
         try {
-            const data = await pedidoService.pedidosTotalPorMes();
+            const { mesInicial, mesFinal } = req.query;
+            
+            // Se não houver datas, usar o mês atual
+            if (!mesInicial && !mesFinal) {
+                const hoje = new Date();
+                const dataInicial = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+                const dataFinal = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0, 23, 59, 59, 999);
+                
+                const data = await pedidoService.pedidosTotalPorMes(dataInicial, dataFinal);
+                return res.status(200).json(data);
+            }
+
+            // Validação para quando as datas são fornecidas
+            if (!mesInicial || !mesFinal) {
+                return res.status(400).json({ error: 'Se uma data for fornecida, ambas são obrigatórias (formato: YYYY-MM)' });
+            }
+
+            // Validar formato das datas (YYYY-MM)
+            const dataRegex = /^\d{4}-\d{2}$/;
+            if (!dataRegex.test(mesInicial) || !dataRegex.test(mesFinal)) {
+                return res.status(400).json({ error: 'Formato de data inválido. Use YYYY-MM' });
+            }
+
+            // Criar datas completas para o primeiro e último dia dos meses
+            const dataInicial = new Date(`${mesInicial}-01T00:00:00.000Z`);
+            const [anoFinal, mes] = mesFinal.split('-');
+            const dataFinal = new Date(anoFinal, parseInt(mes), 0, 23, 59, 59, 999);
+
+            if (isNaN(dataInicial.getTime()) || isNaN(dataFinal.getTime())) {
+                return res.status(400).json({ error: 'Datas inválidas' });
+            }
+
+            const data = await pedidoService.pedidosTotalPorMes(dataInicial, dataFinal);
             return res.status(200).json(data);
         } catch (error) {
-            console.error('Error in listarPedidos6Meses:', error);
+            console.error('Error in listarPedidosPorMes:', error);
             return res.status(500).json({ error: error.message });
         }
     }
