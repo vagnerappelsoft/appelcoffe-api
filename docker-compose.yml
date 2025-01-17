@@ -1,39 +1,59 @@
 version: "3.8"
 services:
+  db:
+    image: mysql:8.0
+    container_name: appelcoffe-mysql
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-cafezinho}
+      MYSQL_DATABASE: ${DB_NAME:-databasecafe}
+      MYSQL_USER: ${DB_USER:-app_user}
+      MYSQL_PASSWORD: ${DB_PASS:-cafezinho}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-cafezinho}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - app-network
+    restart: unless-stopped
+
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: node-app
+    container_name: appelcoffe-api
     ports:
       - "3000:3000"
     environment:
       NODE_ENV: development
-      DB_HOST: 35.198.52.200
-      DB_USER: app_user  # Substitua pelo seu usuário do banco
-      DB_PASS: cafezinho  # Substitua pela senha do usuário do banco
-      DB_NAME: databasecafe  # Nome do banco de dados
+      DB_HOST: db
+      DB_USER: ${DB_USER:-app_user}
+      DB_PASS: ${DB_PASS:-cafezinho}
+      DB_NAME: ${DB_NAME:-databasecafe}
       DB_DIALECT: mysql
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-1h}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
-      - .:/src/
-      - /src/node_modules
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     networks:
       - app-network
-
-  db:
-    image: mysql:8.0
-    container_name: mysql-db
-    ports:
-      - "3307:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: cafezinho
-      MYSQL_DATABASE: databasecafe
-    volumes:
-      - db_data:/var/lib/mysql
-    networks:
-      - app-network
+    restart: unless-stopped
 
 networks:
   app-network:
@@ -41,3 +61,4 @@ networks:
 
 volumes:
   db_data:
+    driver: local

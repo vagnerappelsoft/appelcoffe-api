@@ -90,9 +90,20 @@ route.get('/pessoas/:id', (req, res) => pessoaController.listarIdPessoa(req, res
  *     summary: Atualiza uma pessoa pelo ID
  *     tags: [Pessoas]
  *     parameters:
- * 
- *              id: number
- *              nome:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID da pessoa
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nome:
  *                 type: string
  *               imagem:
  *                 type: string
@@ -100,15 +111,13 @@ route.get('/pessoas/:id', (req, res) => pessoaController.listarIdPessoa(req, res
  *                 type: string
  *               senha:
  *                 type: string
- *               setor: {
- *                 id: number,
- *                 nome: string
- *               }
- *               permissao:
- *                 type: Enum
  *     responses:
  *       200:
  *         description: Pessoa atualizada com sucesso
+ *       404:
+ *         description: Pessoa não encontrada
+ *       500:
+ *         description: Erro no servidor
  */
 route.put('/pessoas/:id', (req, res) => pessoaController.atualizarPessoa(req, res))
 
